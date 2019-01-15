@@ -1,15 +1,16 @@
 let word = 'QWERTY';
-let logo = new Logo(word);
-const TOTAL_LINES = 50
+var logo;
+const TOTAL_LINES = 50;
 
 function setup() {
-    createCanvas(400, 400);
-    word = prompt();
-    logo.addLines(TOTAL_LINES);            
+    createCanvas(1600, 1600);
+    strokeWeight(3);
+    word = prompt('Enter a word:');
+    logo = new Logo(word);
+    logo.addLines(TOTAL_LINES);
 }
 
 function draw() {
-    ellipse(100, 100, 50);
     logo.draw();
 }
 

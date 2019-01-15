@@ -1,7 +1,6 @@
-const SCALAR = 50;
-
+const SCALAR = 30;
+const EPS = 1e-06;
 class Logo {
-
     /**
      * FUNCTION: constructs a Logo object
      * ARGS: 
@@ -11,12 +10,12 @@ class Logo {
         this.word = word;
         this.width = textWidth(word) * SCALAR; // TODO
         this.height = (textAscent(word) + textDescent(word)) * SCALAR; // TODO
-        this.polygons = [new Polygon(
+        this.polygons = [new Polygon([
             createVector(0, 0),
             createVector(this.width, 0),
             createVector(this.width, this.height),
             createVector(0, this.height)
-        )];
+        ])];
         this.graphics = createGraphics(this.width, this.height);
         this.graphics.text(word, 0, 0);
     }
@@ -26,13 +25,14 @@ class Logo {
      *      n: int - number of lines to split the logo with
      */
     addLines(n) {
-        let result = [];
         for (let i = 0; i < n; i++) {
+            let result = [];
             let a = createVector(random(this.width), random(this.height));
             let b = createVector(random(this.width), random(this.height));
-            result.concat(this.polygons.split(a, b));
+            for (let polygon of this.polygons)
+                result = result.concat(polygon.split(a, b));
+            this.polygons = result;
         }
-        this.polygons = result;
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas */
@@ -67,11 +67,15 @@ class Polygon {
         let [x2, y2] = [edge[1].x, edge[1].y];
         let [x3, y3] = [line[0].x, line[0].y];
         let [x4, y4] = [line[1].x, line[1].y];
-        // TODO handle x1 == x2 (or not)
-        let x = ((x1-x2)*(x3*y4 - x4*y3) + (x3-x4)*(x2*y1 - x1*y2))/
+        let x = 0;
+        if (abs(x3-x4) < EPS)
+            x = x3;
+        else
+            x = ((x1-x2)*(x3*y4 - x4*y3) + (x3-x4)*(x2*y1 - x1*y2))/
                 ((y1-y2)*(x3-x4) - (y3-y4)*(x1-x2));
-        let y = (x-x1)*(y1-y2)/(x1-x2) + y1;
-        if ((x1 < x < x2 || x1 > x > x2) && (y1 < y < y2 || y1 > y > y2))
+        let y = (x-x3)*(y3-y4)/(x3-x4) + y3;
+        if (((x-x1 > -EPS && x2-x > -EPS) || (x1-x > -EPS && x-x2 > -EPS)) && 
+            ((y-y1 > -EPS && y2-y > -EPS) || (y1-y > -EPS && y-y2 > -EPS)))
             return createVector(x, y);
     }
 
@@ -89,8 +93,8 @@ class Polygon {
         let splitLine = [a, b];
         // for each edge log intersections and intersected edges
         for (let i = 0; i < this.edges.length; i++) {
-            let intersection = intersect(this.edges[i], splitLine);
-            if (intersection !== null) {
+            let intersection = Polygon.intersect(this.edges[i], splitLine);
+            if (intersection != null) {
                 intersections.push(intersection);
                 intersectedEdges.push(i); 
             }
@@ -101,13 +105,14 @@ class Polygon {
         
         let halfPolygon = (start, finish) => {
             let vertexes = [intersections[start]]; // add first intersection
-            for (let i = intersectedEdges[start]+1; i != intersectedEdges[finish]; i = (i+1)%this.edges.length)
+            let n = this.edges.length;
+            for (let i = (intersectedEdges[start]+1)%n; i != intersectedEdges[finish]; i = (i+1)%n)
                 vertexes.push(this.edges[i][0]);     
-            vertexes.concat([this.edge[intersectedEdge[finish]][0], intersections[finish]]); 
+            vertexes = vertexes.concat([this.edges[intersectedEdges[finish]][0], intersections[finish]]); 
             return vertexes;
         }        
 
-        return [Polygon(halfPolygon(0, 1)), Polygon(halfPolygon(1, 0))]
+        return [new Polygon(halfPolygon(0, 1)), new Polygon(halfPolygon(1, 0))]
     }
 
     /* FUNCTION: checks if a given polygon contains a given point
@@ -123,8 +128,8 @@ class Polygon {
             let [a, b] = this.edges[i];
             if (a.y == b.y) continue;
             let x = (point.y - a.y)/(b.y - a.y) * (b.x - a.x) + a.x;
-            if (a.y >= p.y && p.y > b.y && x > p.x) cnt++;
-            if (b.y >= p.y && p.y > a.y && x > p.x) cnt++;
+            if (a.y >= point.y && point.y > b.y && x > point.x) cnt++;
+            if (b.y >= point.y && point.y > a.y && x > point.x) cnt++;
         }
         return cnt % 2 == 1;
     }
@@ -133,11 +138,11 @@ class Polygon {
     draw() {
         fill(this.filled ? 0 : 255);
         beginShape();
-        for (let edge of edges) {
+        for (let edge of this.edges) {
             let [a, b] = edge;
             vertex(a.x, a.y);   
             vertex(b.x, b.y);
         }
-        endShape();
+        endShape(CLOSE);
     }
 }
