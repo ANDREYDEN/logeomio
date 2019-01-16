@@ -1,5 +1,3 @@
-const SCALAR = 30;
-const EPS = 1e-06;
 class Logo {
     /**
      * FUNCTION: constructs a Logo object
@@ -8,8 +6,9 @@ class Logo {
      */
     constructor(word) {
         this.word = word;
-        this.width = textWidth(word) * SCALAR; // TODO
-        this.height = (textAscent(word) + textDescent(word)) * SCALAR; // TODO
+        let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
+        this.width = bounds.w + 2*PADDING;
+        this.height = 2*bounds.h;// + 2*PADDING;
         this.polygons = [new Polygon([
             createVector(0, 0),
             createVector(this.width, 0),
@@ -33,6 +32,19 @@ class Logo {
                 result = result.concat(polygon.split(a, b));
             this.polygons = result;
         }
+    }
+
+    /* FUNCTION: fills the polygons according to the word*/
+    fillIn() {
+        loadPixels();
+        for (let y = 0; y < height; y++)
+            for (let x = 0; x < width; x++) 
+                if (pixels[(x + y * width) * 4] == 145)// && pixels[(x + y * width) * 4 + 1] == 0)   
+                    for (let p of this.polygons)
+                        if (p.contains(createVector(x, y))) { // TODO: figure out the x, y coords
+                            p.filled = true;
+                            break;
+                        }
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas */
@@ -100,6 +112,7 @@ class Polygon {
             }
         }
 
+        // if there are no intersections, return the original polygon
         if (intersections.length == 0)
             return this;
         
