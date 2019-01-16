@@ -42,9 +42,12 @@ class Logo {
                 if (pixels[(x + y * width) * 4] == 145)// && pixels[(x + y * width) * 4 + 1] == 0)   
                     for (let p of this.polygons)
                         if (p.contains(createVector(x, y))) { // TODO: figure out the x, y coords
-                            p.filled = true;
+                            fill(255, 0, 0);
+                            ellipse(x, y, 5, 5);
+                            //p.filled = true;
                             break;
                         }
+        updatePixels();
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas */

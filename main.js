@@ -6,7 +6,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(1000, 1000);
+    rcreateCanvas(1000, 1000);
     strokeWeight(3);
     textSize(TEXT_SIZE);
     textFont(FONT);
@@ -18,8 +18,8 @@ function setup() {
 
 function draw() {
     logo.draw();
-    fill(145, 0, 0);
-    text(logo.word, logo.width/2, logo.height/2);
+    //fill(145, 0, 0);
+    //text(logo.word, logo.width/2, logo.height/2);
     
     logo.fillIn();
     
