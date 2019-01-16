@@ -39,21 +39,28 @@ class Logo {
         loadPixels();
         for (let y = 0; y < height; y++)
             for (let x = 0; x < width; x++) 
-                if (pixels[(x + y * width) * 4] == 145)// && pixels[(x + y * width) * 4 + 1] == 0)   
+                if (pixels[(x + y * width) * 4] == RED && pixels[(x + y * width) * 4 + 1] == 0) {
                     for (let p of this.polygons)
-                        if (p.contains(createVector(x, y))) { // TODO: figure out the x, y coords
-                            fill(255, 0, 0);
-                            ellipse(x, y, 5, 5);
-                            //p.filled = true;
+                        if (p.contains(createVector(x, y))) {
+                            p.filled = true;
                             break;
-                        }
-        updatePixels();
+                        }      
+                }
     }
 
-    /* FUNCTION: draws all polygons on a p5 canvas */
-    draw() {
+    /* FUNCTION: draws all polygons on a p5 canvas 
+    *  ARGS:
+    *       filledOnly: bool - draw only filled polygons
+    *
+    */
+    draw(filledOnly=false) {
         for (let polygon of this.polygons)
-            polygon.draw();            
+            if (filledOnly) {
+                if (polygon.filled)
+                    polygon.draw();  
+            } else {
+                polygon.draw();  
+            }          
     }
 }
 

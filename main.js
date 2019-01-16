@@ -2,30 +2,26 @@ let word = 'QWERTY';
 var logo;
 
 function preload() {
-    FONT = loadFont('fonts/Marlboro/Marlboro.ttf');
+    FONT = loadFont('fonts/all-things-pink/All Things Pink Skinny.ttf');
 }
 
 function setup() {
-    rcreateCanvas(1000, 1000);
-    strokeWeight(3);
+    createCanvas(2000, 1000);
+    strokeWeight(2);
     textSize(TEXT_SIZE);
     textFont(FONT);
     textAlign(CENTER, CENTER);
+    pixelDensity(1);
     word = prompt('Enter a word:');
     logo = new Logo(word);
     logo.addLines(TOTAL_LINES);
 }
 
 function draw() {
-    logo.draw();
-    //fill(145, 0, 0);
-    //text(logo.word, logo.width/2, logo.height/2);
-    
-    logo.fillIn();
-    
-    logo.draw();
-    fill(145, 0, 0);
+    fill(RED, 0, 0);
     text(logo.word, logo.width/2, logo.height/2);
+    logo.fillIn();
+    logo.draw(true);
     noLoop();
 }
 
