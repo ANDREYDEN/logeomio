@@ -6,7 +6,6 @@ function preload() {
 }
 
 function setup() {
-    print(TOTAL_LINES);
     createCanvas(2000, 1000);
     strokeWeight(2);
     textSize(TEXT_SIZE);
