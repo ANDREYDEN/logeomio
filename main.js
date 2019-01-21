@@ -6,6 +6,7 @@ function preload() {
 }
 
 function setup() {
+    print(TOTAL_LINES);
     createCanvas(2000, 1000);
     strokeWeight(2);
     textSize(TEXT_SIZE);
@@ -20,16 +21,7 @@ function setup() {
 function draw() {
     fill(RED, 0, 0);
     text(logo.word, logo.width/2, logo.height/2);
-    logo.fillIn();
-    logo.draw(true);
+    logo.fillIn(10);
+    logo.draw();
     noLoop();
-}
-
-function mousePressed() {
-    let mouse = createVector(mouseX, mouseY);
-    print(mouse);
-    for (let polygon of logo.polygons) {
-        if (polygon.contains(mouse))
-            polygon.filled = true;
-    }
 }

@@ -26,19 +26,32 @@ class Logo {
     addLines(n) {
         for (let i = 0; i < n; i++) {
             let result = [];
-            let a = createVector(random(this.width), random(this.height));
-            let b = createVector(random(this.width), random(this.height));
-            for (let polygon of this.polygons)
+            let side1 = Math.floor(random(4));
+            let side2 = Math.floor(random(4));
+            if (side1 == side2)
+                side1 = (side1 + 1)%4;
+            let pointOnRect = (side) => {
+                if (side == 0)
+                    return createVector(random(this.width), 0);
+                else if (side == 1)
+                    return createVector(this.width, random(this.height));
+                else if (side == 2)
+                    return createVector(random(this.width), this.height);
+                else
+                    return createVector(0, random(this.height));
+            }
+            let a = pointOnRect(side1), b = pointOnRect(side2);
+                for (let polygon of this.polygons)
                 result = result.concat(polygon.split(a, b));
             this.polygons = result;
         }
     }
 
     /* FUNCTION: fills the polygons according to the word*/
-    fillIn() {
+    fillIn(pixelDistance=1) {
         loadPixels();
-        for (let y = 0; y < height; y++)
-            for (let x = 0; x < width; x++) 
+        for (let y = 0; y < height; y += pixelDistance)
+            for (let x = 0; x < width; x += pixelDistance) 
                 if (pixels[(x + y * width) * 4] == RED && pixels[(x + y * width) * 4 + 1] == 0) {
                     for (let p of this.polygons)
                         if (p.contains(createVector(x, y))) {
