@@ -14,13 +14,12 @@ function setup() {
     pixelDensity(1);
     word = prompt('Enter a word:');
     logo = new Logo(word);
-    logo.addLines(TOTAL_LINES);
+    //logo.addLines(POLYGONS);
+    logo.dividePolygons(POLYGONS);
 }
 
 function draw() {
-    fill(RED, 0, 0);
-    text(logo.word, logo.width/2, logo.height/2);
-    logo.fillIn(10);
+    //logo.fillIn(10);
     logo.draw();
     noLoop();
 }
