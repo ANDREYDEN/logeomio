@@ -40,7 +40,12 @@ class Polygon {
     *      float - the area of the polygon
     */
     area() {
-        // TODO
+        let singleArea = (A, B) => {return 0.5 * (A.x - B.x) * (A.y + B.y)};
+        let result = 0;
+        for (let i = 0; i < this.edges.length; i++) {
+            result += singleArea(this.edges[i][0], this.edges[i][1]);
+        }
+        return result;
     }
 
     /* FUNCTION: finds the points of intersection if any by a given line

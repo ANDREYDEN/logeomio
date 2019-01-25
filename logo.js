@@ -56,12 +56,12 @@ class Logo {
      * ARGS: 
      *      n: int - number of times to divide the polygons in half
      */
-    dividePolygons(n, threshhold=100) {
+    dividePolygons(n, threshold=100) {
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
-        for (let i = 0; i < n; i++) {
-            let polygonIndex = floor(random(bigPolygons.length));
-            let polygon = bigPolygons[polygonIndex];
+        let resultingPolygons = [];
+        for (let i = 0; bigPolygons.length; i++) {
+            let polygon = bigPolygons[bigPolygons.length - 1];
             // pick to random edges of the polygon
             let intersectedEdges = [Math.floor(random(polygon.edges.length)),
                                     Math.floor(random(polygon.edges.length))];
@@ -74,11 +74,26 @@ class Logo {
             
             let subPolygons = polygon.split(intersections, intersectedEdges);
             
-            // TODO: 
-            // 1. delete the polygon from this.polygons and bigPolygons
-            // 2. push both subpolygons to this.polygons
-            // 3. push only big subpolygons to bigPolygons
+            // if a subpolygon is still big enough, push it to bigPoygons
+            // else push it to the resultingPolygons
+            if (subPolygons[0].area() > threshold) {
+                bigPolygons[bigPolygons.length - 1] = subPolygons[0];
+                if (subPolygons[1].area() > threshold) {
+                    bigPolygons.push(subPolygons[1]);
+                } else {
+                    resultingPolygons.push(subPolygons[1]);
+                }
+            } else {
+                resultingPolygons.push(subPolygons[0]);
+                if (subPolygons[1].area() > threshold) {
+                    bigPolygons[bigPolygons.length - 1] = subPolygons[1];
+                } else {
+                    resultingPolygons.push(subPolygons[1]);
+                    bigPolygons.pop();
+                }
+            }
         }
+        this.polygons = resultingPolygons;
     }
 
     /* FUNCTION: fills the polygons according to the word*/

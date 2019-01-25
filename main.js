@@ -7,7 +7,7 @@ function preload() {
 
 function setup() {
     createCanvas(2000, 1000);
-    strokeWeight(2);
+    strokeWeight(0.5);
     textSize(TEXT_SIZE);
     textFont(FONT);
     textAlign(CENTER, CENTER);
@@ -15,11 +15,12 @@ function setup() {
     word = prompt('Enter a word:');
     logo = new Logo(word);
     //logo.addLines(POLYGONS);
-    logo.dividePolygons(POLYGONS);
+    logo.dividePolygons(POLYGONS, 100);
+    print(POLYGONS);
 }
 
 function draw() {
-    //logo.fillIn(10);
-    logo.draw();
+    logo.fillIn();
+    logo.draw(true);
     noLoop();
 }
