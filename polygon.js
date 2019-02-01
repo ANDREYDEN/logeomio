@@ -48,6 +48,18 @@ class Polygon {
         return result;
     }
 
+    /* FUNCTION: returns the perimeter of the polygon
+    * RETURNS:
+    *      float - the perimeter of the polygon
+    */
+    perimeter() {
+        let result = 0;
+        for (let edge of this.edges) {
+            result += edge[0].dist(edge[1]);
+        }
+        return result;
+    }
+
     /* FUNCTION: finds the points of intersection if any by a given line
      * ARGS: 
      *      a, b: p5.Vectors - points that define a splitting line

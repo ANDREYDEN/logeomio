@@ -56,11 +56,11 @@ class Logo {
      * ARGS: 
      *      n: int - number of times to divide the polygons in half
      */
-    dividePolygons(n, threshold=100) {
+    dividePolygons(n, areaThreshold=500) {
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
-        for (let i = 0; bigPolygons.length; i++) {
+        for (let i = 0; bigPolygons.length /*&& i < n*/; i++) {
             let polygon = bigPolygons[bigPolygons.length - 1];
             // pick to random edges of the polygon
             let intersectedEdges = [Math.floor(random(polygon.edges.length)),
@@ -76,25 +76,34 @@ class Logo {
             
             // if a subpolygon is still big enough, push it to bigPoygons
             // else push it to the resultingPolygons
-            if (subPolygons[0].area() > threshold) {
-                bigPolygons[bigPolygons.length - 1] = subPolygons[0];
-                if (subPolygons[1].area() > threshold) {
-                    bigPolygons.push(subPolygons[1]);
-                } else {
-                    resultingPolygons.push(subPolygons[1]);
-                }
-            } else {
+
+            let check = (polygon) => {
+                return (polygon.area() < areaThreshold);
+            }
+
+            if (check(subPolygons[0])) {
                 resultingPolygons.push(subPolygons[0]);
-                if (subPolygons[1].area() > threshold) {
-                    bigPolygons[bigPolygons.length - 1] = subPolygons[1];
-                } else {
+                if (check(subPolygons[1])) {
                     resultingPolygons.push(subPolygons[1]);
                     bigPolygons.pop();
+                } else {
+                    bigPolygons[bigPolygons.length - 1] = subPolygons[1];
+                }
+            } else {
+                bigPolygons[bigPolygons.length - 1] = subPolygons[0];
+                if (check(subPolygons[1])) {
+                    resultingPolygons.push(subPolygons[1]);
+                } else {
+                    bigPolygons.push(subPolygons[1]);
                 }
             }
         }
         this.polygons = resultingPolygons;
+        for (let polygon of bigPolygons)
+           this.polygons.push(polygon);
     }
+
+    
 
     /* FUNCTION: fills the polygons according to the word*/
     fillIn(pixelDistance=1) {
