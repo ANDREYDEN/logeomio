@@ -107,7 +107,6 @@ class Polygon {
         return [new Polygon(halfPolygon(0, 1)), new Polygon(halfPolygon(1, 0))]
     }
 
-
     /* FUNCTION: checks if a given polygon contains a given point
      * ARGS: 
      *      point: p5.Vector - a point to be checked

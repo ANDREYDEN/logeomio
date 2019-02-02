@@ -56,18 +56,32 @@ class Logo {
      * ARGS: 
      *      n: int - number of times to divide the polygons in half
      */
-    dividePolygons(n, areaThreshold=500) {
+    dividePolygons(n, topRecursionLevel=16, areaThreshold=500) {
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
-        for (let i = 0; bigPolygons.length /*&& i < n*/; i++) {
+        while (bigPolygons.length) {
             let polygon = bigPolygons[bigPolygons.length - 1];
-            // pick to random edges of the polygon
-            let intersectedEdges = [Math.floor(random(polygon.edges.length)),
-                                    Math.floor(random(polygon.edges.length))];
-            // make them different
-            if (intersectedEdges[0] == intersectedEdges[1])
-                intersectedEdges[1] = (intersectedEdges[1] + 1) % polygon.edges.length;
+            let currentArea = polygon.area();
+            
+            // pick to BIGGEST edges of the polygon
+            let intersectedEdges = [0, 1];
+            let edgeLengths = [0, 0];
+            for (let i = 0; i < polygon.edges.length; i++) {
+                let vertex1 = polygon.edges[i][0];
+                let vertex2 = polygon.edges[i][1];
+                let distance = vertex1.dist(vertex2);
+                if (distance > edgeLengths[0]) {
+                    edgeLengths[1] = edgeLengths[0];
+                    edgeLengths[0] = distance;
+                    intersectedEdges[1] = intersectedEdges[0];
+                    intersectedEdges[0] = i;
+                } else if (distance > edgeLengths[1]) {
+                    edgeLengths[1] = distance;
+                    intersectedEdges[1] = i;
+                }
+            }
+            
             // pick to points on those edges
             let intersections = [polygon.pickPoint(intersectedEdges[0]),
                                  polygon.pickPoint(intersectedEdges[1])];
@@ -76,34 +90,21 @@ class Logo {
             
             // if a subpolygon is still big enough, push it to bigPoygons
             // else push it to the resultingPolygons
-
-            let check = (polygon) => {
-                return (polygon.area() < areaThreshold);
-            }
-
-            if (check(subPolygons[0])) {
+            bigPolygons.pop();
+            if (currentArea < areaThreshold) {
                 resultingPolygons.push(subPolygons[0]);
-                if (check(subPolygons[1])) {
-                    resultingPolygons.push(subPolygons[1]);
-                    bigPolygons.pop();
-                } else {
-                    bigPolygons[bigPolygons.length - 1] = subPolygons[1];
-                }
+                resultingPolygons.push(subPolygons[1]);
             } else {
-                bigPolygons[bigPolygons.length - 1] = subPolygons[0];
-                if (check(subPolygons[1])) {
-                    resultingPolygons.push(subPolygons[1]);
-                } else {
-                    bigPolygons.push(subPolygons[1]);
-                }
+                bigPolygons.push(subPolygons[0]);
+                bigPolygons.push(subPolygons[1]);
             }
+            //print(bigPolygons.length, currentArea);
         }
+        print('finished dividing');
         this.polygons = resultingPolygons;
-        for (let polygon of bigPolygons)
-           this.polygons.push(polygon);
     }
 
-    
+
 
     /* FUNCTION: fills the polygons according to the word*/
     fillIn(pixelDistance=1) {

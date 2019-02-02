@@ -15,12 +15,12 @@ function setup() {
     word = prompt('Enter a word:');
     logo = new Logo(word);
     //logo.addLines(POLYGONS);
-    logo.dividePolygons(POLYGONS, 200);
     print(POLYGONS);
+    logo.dividePolygons(POLYGONS);
 }
 
 function draw() {
     logo.fillIn();
-    logo.draw(true);
+    logo.draw();
     noLoop();
 }
