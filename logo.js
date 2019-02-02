@@ -15,8 +15,6 @@ class Logo {
             createVector(this.width, this.height),
             createVector(0, this.height)
         ])];
-        this.graphics = createGraphics(this.width, this.height);
-        this.graphics.text(word, 0, 0);
     }
 
     /* FUNCTION: initializes the polygons data structure by splitting them with random lines
@@ -56,7 +54,7 @@ class Logo {
      * ARGS: 
      *      n: int - number of times to divide the polygons in half
      */
-    dividePolygons(n, topRecursionLevel=16, areaThreshold=500) {
+    dividePolygons(n, topRecursionLevel=16, areaThreshold=MIN_AREA) {
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
@@ -113,9 +111,10 @@ class Logo {
         text(this.word, this.width / 2, this.height / 2);
 
         loadPixels();
-        for (let y = 0; y < height; y += pixelDistance)
-            for (let x = 0; x < width; x += pixelDistance) 
-                if (pixels[(x + y * width) * 4] == RED && pixels[(x + y * width) * 4 + 1] == 0) {
+        for (let y = 0; y < this.height; y += pixelDistance)
+            for (let x = 0; x < this.width; x += pixelDistance) 
+                if (pixels[(x + y * width) * 4] == RED && 
+                    pixels[(x + y * width) * 4 + 1] == 0) {
                     for (let p of this.polygons)
                         if (p.contains(createVector(x, y))) {
                             p.filled = true;

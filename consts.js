@@ -1,6 +1,6 @@
-const PADDING = 30;
+const PADDING = 15;
 const EPS = 1e-06;
-const TEXT_SIZE = 500;
-const POLYGONS = 700;
+const TEXT_SIZE = 100;
+const MIN_AREA = 40;
 const RED = 145;
-var FONT;
+let FONT;
