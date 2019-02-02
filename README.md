@@ -2,6 +2,8 @@
 Enter a word or a name of your company and this logo generator will create a geometric representation of the word.
 
 ## Gallery
+
+![logemio](examples/Logemio.png)
 ![google](examples/Google2.png)
 
 ## Notes
