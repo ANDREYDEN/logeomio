@@ -54,7 +54,7 @@ class Logo {
      * ARGS: 
      *      n: int - number of times to divide the polygons in half
      */
-    dividePolygons(n, topRecursionLevel=16, areaThreshold=MIN_AREA) {
+    dividePolygons(areaThreshold=MIN_AREA) {
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
@@ -96,7 +96,6 @@ class Logo {
                 bigPolygons.push(subPolygons[0]);
                 bigPolygons.push(subPolygons[1]);
             }
-            //print(bigPolygons.length, currentArea);
         }
         print('finished dividing');
         this.polygons = resultingPolygons;
@@ -121,6 +120,7 @@ class Logo {
                             break;
                         }      
                 }
+        background(255);
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 

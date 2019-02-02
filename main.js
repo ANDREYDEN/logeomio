@@ -19,6 +19,6 @@ function setup() {
 function draw() {
     logo.fillIn();
     scale(3);
-    logo.draw();
+    logo.draw(true);
     noLoop();
 }
