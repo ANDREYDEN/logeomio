@@ -3,7 +3,7 @@ Enter a word or a name of your company and this logo generator will create a geo
 
 ## Gallery
 
-![logemio](examples/Logemio.png)
+![logemio](examples/Logeomio.png)
 ![google](examples/Google2.png)
 
 ## Notes
