@@ -3,11 +3,11 @@ Enter a word or a name of your company and this logo generator will create a geo
 
 ## Gallery
 
-![logemio](examples/Logeomio.png)
-![google](examples/Google2.png)
+![logemio](images/Logeomio.png)
+![google](images/Google2.png)
 
 ## Notes
-The application is quite slow - you'll need to wait a minute or two. An improvement is currently being worked on.
+The time of logo creation depends on the word length. Words under 15 charachters recommended. 
 
 ## Inspiration
 A Google doodle: https://www.google.com/doodles/fahrelnissa-zeids-118th-birthday
