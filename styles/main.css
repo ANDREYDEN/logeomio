@@ -1,0 +1,64 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+/*****************HEADER****************/
+
+header, footer {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 1em;
+}
+
+header {
+    margin-bottom: 2em;
+}
+
+/*****************MAIN****************/
+
+main {
+    width: 85%;
+    margin: auto;
+}
+
+label {
+    font-size: 1.25em;
+}
+
+input {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+input.textbox {
+    height: 25px;
+    width: 50%;
+    font-size: 1.25em;
+}
+
+input.button {
+    height: 25px;
+    font-size: 1.25em;
+    border-radius: 5px;
+    outline: none;
+}
+
+div#sketch {
+    border: 1px solid black;
+}
+
+/*****************FOOTER****************/
+
+footer {
+    margin-top: 2em;
+}
+
+footer a {
+    color: yellow;
+}

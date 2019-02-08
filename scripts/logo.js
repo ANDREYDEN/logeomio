@@ -7,8 +7,8 @@ class Logo {
     constructor(word) {
         this.word = word;
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
-        this.width = bounds.w + 2*PADDING;
-        this.height = 2*bounds.h;// + 2*PADDING;
+        this.width = bounds.w + 2 * PADDING;
+        this.height = 2*bounds.h;
         this.polygons = [new Polygon([
             createVector(0, 0),
             createVector(this.width, 0),
@@ -103,12 +103,13 @@ class Logo {
 
 
 
-    /* FUNCTION: fills the polygons according to the word*/
+    /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
     fillIn(pixelDistance=1) {
         // draw the actual word
         fill(RED, 0, 0);
         text(this.word, this.width / 2, this.height / 2);
 
+        // fill those polygons that intersect the word
         loadPixels();
         for (let y = 0; y < this.height; y += pixelDistance)
             for (let x = 0; x < this.width; x += pixelDistance) 
