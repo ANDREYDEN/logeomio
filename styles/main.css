@@ -49,8 +49,13 @@ input.button {
     outline: none;
 }
 
+p#errorMessage {
+    color: red;
+}
+
 div#sketch {
     border: 1px solid black;
+    margin: auto;
 }
 
 /*****************FOOTER****************/

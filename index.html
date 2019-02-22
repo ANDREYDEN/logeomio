@@ -18,9 +18,11 @@
         <main>
             <form onsubmit="return displayLogo();">
                 <label>Enter a word: </label><br>
-                <input type="text" id="word_input" class="textbox" value="Hi!"><br>
+                <input type="text" id="word_input" class="textbox" value="Hello"><br>
+                <p id="errorMessage"></p>
                 <input type="submit" class="button" value="Create">
                 <div id="sketch"></div>
+                <input type="button" class="button" value="Save" onclick="saveCanvas('logo', 'png')">
             </form>
         </main>
         <footer>
