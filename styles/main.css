@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+body {
+    width: 85%;
+    margin: auto;
+}
+
 h1 {
     font-size: 3em;
 }
@@ -21,11 +26,6 @@ header {
 }
 
 /*****************MAIN****************/
-
-main {
-    width: 85%;
-    margin: auto;
-}
 
 label {
     font-size: 1.25em;

@@ -3,21 +3,24 @@ let logo;
 function displayLogo() {
     let word = document.getElementById("word_input").value;
     logo = new Logo(word);
-    //resizeCanvas(logo.width, logo.height+500);
     
     logo.dividePolygons();
     logo.fillIn();
+    resizeCanvas(width, logo.height*SCALE_FACTOR);
     scale(SCALE_FACTOR);
     logo.draw(true);
     scale(1/SCALE_FACTOR);
-}
+
+    return false;
+} 
 
 function preload() {
     FONT = loadFont('fonts/all-things-pink/All Things Pink Skinny.ttf');
 }
 
 function setup() {
-    let canvas = createCanvas(1000, 500);
+    let canvas = createCanvas(WINDOW_CANVAS_RATIO*windowWidth, 500);
+    // place th canvas in a div
     canvas.parent("sketch");
 
     strokeWeight(0.05);

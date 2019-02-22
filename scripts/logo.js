@@ -101,8 +101,6 @@ class Logo {
         this.polygons = resultingPolygons;
     }
 
-
-
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
     fillIn(pixelDistance=1) {
         // draw the actual word
