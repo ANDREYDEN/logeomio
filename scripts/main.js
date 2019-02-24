@@ -24,7 +24,7 @@ function displayLogo() {
 } 
 
 function preload() {
-    FONT = loadFont("fonts/all-things-pink/All Things Pink Skinny.ttf");
+    FONT = loadFont("fonts/All_Things_Pink.ttf");
 }
 
 function setup() {
