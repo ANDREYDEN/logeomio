@@ -10,7 +10,7 @@ function displayLogo() {
     } else {
         logo = new Logo(word);
         scaleFactor = width / logo.width;
-        resizeCanvas(width, scaleFactor * int(logo.height), false); // f***ing floats
+        resizeCanvas(width, int(scaleFactor * logo.height), false); // f***ing floats
         
         // routine
         logo.dividePolygons();
@@ -28,7 +28,7 @@ function preload() {
 }
 
 function setup() {
-    let canvas = createCanvas(WINDOW_CANVAS_RATIO*windowWidth-15, 200);
+    let canvas = createCanvas(int(WINDOW_CANVAS_RATIO*windowWidth)-15, 200);
     // place the canvas in a div
     canvas.parent("sketch");
 
