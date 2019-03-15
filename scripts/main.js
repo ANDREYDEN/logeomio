@@ -6,11 +6,12 @@ function displayLogo() {
     errorMessage.innerHTML = "";
     
     if (word.length < 2 || word.length > 15) {
+        // display error
         errorMessage.innerHTML = "The name should be from 2 to 15 characters long";
     } else {
         logo = new Logo(word);
         scaleFactor = width / logo.width;
-        resizeCanvas(width, int(scaleFactor * logo.height), false); // f***ing floats
+        resizeCanvas(width, int(scaleFactor * logo.height), false);
         
         // routine
         logo.dividePolygons();
@@ -39,4 +40,8 @@ function setup() {
     pixelDensity(1);
 
     displayLogo();
+}
+
+function draw() {
+
 }

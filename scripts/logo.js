@@ -55,15 +55,20 @@ class Logo {
      *      n: int - number of times to divide the polygons in half
      */
     dividePolygons(areaThreshold=MIN_AREA) {
+        /* TODO:
+         *      - Turn into a single iteration
+         *      - Add bigPolygons as class field
+         */
+        
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
         while (bigPolygons.length) {
-            let polygon = bigPolygons[bigPolygons.length - 1];
+            let polygon = bigPolygons.pop();
             let currentArea = polygon.area();
             
             // pick to BIGGEST edges of the polygon
-            let intersectedEdges = [0, 1];
+            let intersectedEdges = [0, 1]; // indecies of intersected edges
             let edgeLengths = [0, 0];
             for (let i = 0; i < polygon.edges.length; i++) {
                 let vertex1 = polygon.edges[i][0];
@@ -80,21 +85,21 @@ class Logo {
                 }
             }
             
-            // pick to points on those edges
+            // pick to points on the selected edges
             let intersections = [polygon.pickPoint(intersectedEdges[0]),
                                  polygon.pickPoint(intersectedEdges[1])];
-            
+
+            // split the polygon in half
             let subPolygons = polygon.split(intersections, intersectedEdges);
             
-            // if a subpolygon is still big enough, push it to bigPoygons
-            // else push it to the resultingPolygons
-            bigPolygons.pop();
-            if (currentArea < areaThreshold) {
-                resultingPolygons.push(subPolygons[0]);
-                resultingPolygons.push(subPolygons[1]);
-            } else {
+            // if the selected polygon was still big enough, push its halves to bigPolygons
+            // else push the halves to the resultingPolygons
+            if (currentArea > areaThreshold) {
                 bigPolygons.push(subPolygons[0]);
                 bigPolygons.push(subPolygons[1]);
+            } else {
+                resultingPolygons.push(subPolygons[0]);
+                resultingPolygons.push(subPolygons[1]);
             }
         }
         print('finished dividing');
@@ -128,12 +133,14 @@ class Logo {
     *
     */
     draw(filledOnly=false) {
-        for (let polygon of this.polygons)
+        for (let polygon of this.polygons) {
             if (filledOnly) {
-                if (polygon.filled)
+                if (polygon.filled) {
                     polygon.draw();  
+                }
             } else {
                 polygon.draw();  
-            }          
+            }       
+        }   
     }
 }
