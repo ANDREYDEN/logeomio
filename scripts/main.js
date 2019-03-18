@@ -1,4 +1,5 @@
 let logo;
+let animationInProgress = false;
 
 function displayLogo() {
     let word = document.getElementById("word_input").value;
@@ -10,15 +11,7 @@ function displayLogo() {
         errorMessage.innerHTML = "The name should be from 2 to 15 characters long";
     } else {
         logo = new Logo(word);
-        scaleFactor = width / logo.width;
-        resizeCanvas(width, int(scaleFactor * logo.height), false);
-        
-        // routine
-        logo.dividePolygons();
-        logo.fillIn();
-        // scale the canvas so that the logo width is reasonable
-        scale(scaleFactor);
-        logo.draw(filledOnly=true);
+        animationInProgress = true;
     }
 
     return false;
@@ -33,7 +26,8 @@ function setup() {
     // place the canvas in a div
     canvas.parent("sketch");
 
-    strokeWeight(0.05);
+    strokeWeight(0.2);
+    stroke(255, 0, 0);
     textSize(TEXT_SIZE);
     textFont(FONT);
     textAlign(CENTER, CENTER);
@@ -43,5 +37,15 @@ function setup() {
 }
 
 function draw() {
-
+    if (animationInProgress) {
+        scaleFactor = width / logo.width;
+        resizeCanvas(width, int(scaleFactor * logo.height), true);
+    
+        // routine
+        animationInProgress = logo.dividePolygon();
+        logo.fillIn();
+        // scale the canvas so that the logo width is reasonable
+        scale(scaleFactor);
+        logo.draw(filledOnly=true);
+    }
 }

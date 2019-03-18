@@ -9,12 +9,21 @@ class Logo {
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
         this.height = 2*bounds.h;
-        this.polygons = [new Polygon([
+        this.currentPolygons = [new Polygon([
             createVector(0, 0),
             createVector(this.width, 0),
             createVector(this.width, this.height),
             createVector(0, this.height)
         ])];
+        this.resultingPolygons = [];
+    }
+
+    /* FUNCTION: returns all the polygons in the division
+    *  RETURNS:
+    *      n: Polygon[] - array of all the polygons in the division
+    */
+    getAllPolygons() {
+        return this.currentPolygons.concat(this.resultingPolygons);
     }
 
     /* FUNCTION: initializes the polygons data structure by splitting them with random lines
@@ -50,60 +59,57 @@ class Logo {
         }
     }
 
-    /* FUNCTION: initializes the polygons data structure by randomly dividing them in half
+    /* FUNCTION: picks one polygon from the polygons data structure and randomly divides it in half
      * ARGS: 
-     *      n: int - number of times to divide the polygons in half
+     *      areaThreshold: double - the minimal area of a polygon
+     * RETURNS:
+     *      bool: true if the division was successfull
      */
-    dividePolygons(areaThreshold=MIN_AREA) {
-        /* TODO:
-         *      - Turn into a single iteration
-         *      - Add bigPolygons as class field
-         */
+    dividePolygon(areaThreshold=MIN_AREA) {
+        if (this.currentPolygons.length == 0) {
+            return false;
+        }       
         
-        // consider only the polygons with big area
-        let bigPolygons = this.polygons;
-        let resultingPolygons = [];
-        while (bigPolygons.length) {
-            let polygon = bigPolygons.pop();
-            let currentArea = polygon.area();
-            
-            // pick to BIGGEST edges of the polygon
-            let intersectedEdges = [0, 1]; // indecies of intersected edges
-            let edgeLengths = [0, 0];
-            for (let i = 0; i < polygon.edges.length; i++) {
-                let vertex1 = polygon.edges[i][0];
-                let vertex2 = polygon.edges[i][1];
-                let distance = vertex1.dist(vertex2);
-                if (distance > edgeLengths[0]) {
-                    edgeLengths[1] = edgeLengths[0];
-                    edgeLengths[0] = distance;
-                    intersectedEdges[1] = intersectedEdges[0];
-                    intersectedEdges[0] = i;
-                } else if (distance > edgeLengths[1]) {
-                    edgeLengths[1] = distance;
-                    intersectedEdges[1] = i;
-                }
-            }
-            
-            // pick to points on the selected edges
-            let intersections = [polygon.pickPoint(intersectedEdges[0]),
-                                 polygon.pickPoint(intersectedEdges[1])];
-
-            // split the polygon in half
-            let subPolygons = polygon.split(intersections, intersectedEdges);
-            
-            // if the selected polygon was still big enough, push its halves to bigPolygons
-            // else push the halves to the resultingPolygons
-            if (currentArea > areaThreshold) {
-                bigPolygons.push(subPolygons[0]);
-                bigPolygons.push(subPolygons[1]);
-            } else {
-                resultingPolygons.push(subPolygons[0]);
-                resultingPolygons.push(subPolygons[1]);
+        // take a polygon to cut 
+        let polygon = this.currentPolygons.pop();
+        
+        // pick to BIGGEST edges of the polygon
+        let intersectedEdges = [0, 1]; // indecies of intersected edges
+        let edgeLengths = [0, 0];
+        for (let i = 0; i < polygon.edges.length; i++) {
+            let vertex1 = polygon.edges[i][0];
+            let vertex2 = polygon.edges[i][1];
+            let distance = vertex1.dist(vertex2);
+            if (distance > edgeLengths[0]) {
+                edgeLengths[1] = edgeLengths[0];
+                edgeLengths[0] = distance;
+                intersectedEdges[1] = intersectedEdges[0];
+                intersectedEdges[0] = i;
+            } else if (distance > edgeLengths[1]) {
+                edgeLengths[1] = distance;
+                intersectedEdges[1] = i;
             }
         }
-        print('finished dividing');
-        this.polygons = resultingPolygons;
+            
+        // pick to points on the selected edges
+        let intersections = [polygon.pickPoint(intersectedEdges[0]),
+                             polygon.pickPoint(intersectedEdges[1])];
+
+        // split the polygon in half
+        let subPolygons = polygon.split(intersections, intersectedEdges);
+        
+        // if the selected polygon was still big enough, push its halves to currentPolygons
+        // else push the halves to the resultingPolygons
+        if (polygon.area() > areaThreshold) {
+            this.currentPolygons.push(subPolygons[0], subPolygons[1]);
+        } else {
+            this.resultingPolygons.push(subPolygons[0], subPolygons[1]);
+        }
+
+        console.log('cur:', this.currentPolygons.length);
+        console.log('res:', this.resultingPolygons.length);
+
+        return true;
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
@@ -118,7 +124,8 @@ class Logo {
             for (let x = 0; x < this.width; x += pixelDistance) 
                 if (pixels[(x + y * width) * 4] == RED && 
                     pixels[(x + y * width) * 4 + 1] == 0) {
-                    for (let p of this.polygons)
+                    // iterate over all of the polygons
+                    for (let p of this.getAllPolygons())
                         if (p.contains(createVector(x, y))) {
                             p.filled = true;
                             break;
@@ -130,15 +137,10 @@ class Logo {
     /* FUNCTION: draws all polygons on a p5 canvas 
     *  ARGS:
     *       filledOnly: bool - draw only filled polygons
-    *
     */
     draw(filledOnly=false) {
-        for (let polygon of this.polygons) {
-            if (filledOnly) {
-                if (polygon.filled) {
-                    polygon.draw();  
-                }
-            } else {
+        for (let polygon of this.getAllPolygons()) {
+            if (!filledOnly || (filledOnly && polygon.filled)) {
                 polygon.draw();  
             }       
         }   
