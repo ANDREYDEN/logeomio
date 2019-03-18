@@ -126,7 +126,7 @@ class Polygon {
      * ARGS: 
      *      edgeNum: int - the number of the edge to pick the point on
      * RETURNS:
-     *      Vector:  the resulting point
+     *      p5.Vector:  the resulting point
      */
     pickPoint(edgeNum) {
         // print(this.edges, edgeNum);
