@@ -15,6 +15,7 @@ class Logo {
             createVector(this.width, this.height),
             createVector(0, this.height)
         ])];
+        this.currentPolygons[0].filled = true;
         this.resultingPolygons = [];
     }
 
@@ -68,11 +69,18 @@ class Logo {
     dividePolygon(areaThreshold=MIN_AREA) {
         if (this.currentPolygons.length == 0) {
             return false;
-        }       
-        
+        }
+
         // take a polygon to cut 
         let polygon = this.currentPolygons.pop();
-        
+
+        // if the polygon does not cover any of the pixels of the message
+        // there is no sense to divide it
+        if (!polygon.filled) {
+            this.resultingPolygons.push(polygon);
+            return true;
+        }
+
         // pick to BIGGEST edges of the polygon
         let intersectedEdges = [0, 1]; // indecies of intersected edges
         let edgeLengths = [0, 0];
@@ -90,14 +98,14 @@ class Logo {
                 intersectedEdges[1] = i;
             }
         }
-            
+
         // pick to points on the selected edges
         let intersections = [polygon.pickPoint(intersectedEdges[0]),
-                             polygon.pickPoint(intersectedEdges[1])];
+        polygon.pickPoint(intersectedEdges[1])];
 
         // split the polygon in half
         let subPolygons = polygon.split(intersections, intersectedEdges);
-        
+
         // if the selected polygon was still big enough, push its halves to currentPolygons
         // else push the halves to the resultingPolygons
         if (polygon.area() > areaThreshold) {
@@ -106,9 +114,8 @@ class Logo {
             this.resultingPolygons.push(subPolygons[0], subPolygons[1]);
         }
 
-        console.log('cur:', this.currentPolygons.length);
-        console.log('res:', this.resultingPolygons.length);
-
+        // console.log('cur:', this.currentPolygons.length);
+        // console.log('res:', this.resultingPolygons.length);
         return true;
     }
 

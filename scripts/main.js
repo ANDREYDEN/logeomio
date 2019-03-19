@@ -38,7 +38,7 @@ function setup() {
 
 function draw() {
     if (animationInProgress) {
-        scaleFactor = width / logo.width;
+        let scaleFactor = width / logo.width;
         resizeCanvas(width, int(scaleFactor * logo.height), true);
     
         // routine
