@@ -61,7 +61,7 @@ class Polygon {
      * ARGS: 
      *      a, b: Vectors - points that define a splitting line
      * RETURNS:
-     *      [[Vector, Vector], [int, int]] - points of intersection and the respetive edge numbers
+     *      [[p5.Vector, p5.Vector], [int, int]] - points of intersection and the respetive edge numbers
      */
     intersectByLine(a, b) {
         let intersections = []; // coordinates of intersections

@@ -67,9 +67,7 @@ class Logo {
      *      bool: true if the division was successfull
      */
     dividePolygon(areaThreshold=MIN_AREA) {
-        if (this.currentPolygons.length == 0) {
-            return false;
-        }
+        if (this.currentPolygons.length == 0) return false;
 
         // take a polygon to cut 
         let polygon = this.currentPolygons.pop();
@@ -84,24 +82,25 @@ class Logo {
         // pick to BIGGEST edges of the polygon
         let intersectedEdges = [0, 1]; // indecies of intersected edges
         let edgeLengths = [0, 0];
-        for (let i = 0; i < polygon.edges.length; i++) {
-            let vertex1 = polygon.edges[i][0];
-            let vertex2 = polygon.edges[i][1];
+
+        polygon.edges.forEach((edge, i) => {
+            let vertex1 = edge[0];
+            let vertex2 = edge[1];
             let distance = vertex1.dist(vertex2);
             if (distance > edgeLengths[0]) {
-                edgeLengths[1] = edgeLengths[0];
-                edgeLengths[0] = distance;
-                intersectedEdges[1] = intersectedEdges[0];
-                intersectedEdges[0] = i;
+                edgeLengths = [distance, edgeLengths[0]]
+                intersectedEdges = [i, intersectedEdges[0]]
             } else if (distance > edgeLengths[1]) {
                 edgeLengths[1] = distance;
                 intersectedEdges[1] = i;
             }
-        }
+        })
 
-        // pick to points on the selected edges
-        let intersections = [polygon.pickPoint(intersectedEdges[0]),
-        polygon.pickPoint(intersectedEdges[1])];
+        // pick 2 points on the selected edges
+        let intersections = [
+            polygon.pickPoint(intersectedEdges[0]),
+            polygon.pickPoint(intersectedEdges[1])
+        ];
 
         // split the polygon in half
         let subPolygons = polygon.split(intersections, intersectedEdges);
