@@ -35,17 +35,18 @@ class Polygon {
             return createVector(x, y);
     }
 
+    /* FUNCTION: returns the length of the edge */
+    static edgeLen(edge) {
+        return edge[0].dist(edge[1])
+    }
+
     /* FUNCTION: returns the area of the polygon
     * RETURNS:
     *      float - the area of the polygon
     */
     area() {
-        let singleArea = (A, B) => {return 0.5 * (A.x - B.x) * (A.y + B.y)};
-        let result = 0;
-        for (let i = 0; i < this.edges.length; i++) {
-            result += singleArea(this.edges[i][0], this.edges[i][1]);
-        }
-        return result;
+        let singleArea = (A, B) => 0.5 * (A.x - B.x) * (A.y + B.y)
+        return this.edges.reduce((sum, edge) => sum + singleArea(edge[0], edge[1]), 0)
     }
 
     /* FUNCTION: returns the perimeter of the polygon
@@ -53,18 +54,14 @@ class Polygon {
     *      float - the perimeter of the polygon
     */
     perimeter() {
-        let result = 0;
-        for (let edge of this.edges) {
-            result += edge[0].dist(edge[1]);
-        }
-        return result;
+        return this.edges.reduce((sum, edge) => sum + edge[0].dist(edge[1]), 0)
     }
 
     /* FUNCTION: finds the points of intersection if any by a given line
      * ARGS: 
      *      a, b: p5.Vectors - points that define a splitting line
      * RETURNS:
-     *      [[p5.Vector, p5.Vector], [int, int]] - points of intersection and the recpetive edge numbers
+     *      [[p5.Vector, p5.Vector], [int, int]] - points of intersection and the respetive edge numbers
      */
     intersectByLine(a, b) {
         let intersections = []; // coordinates of intersections
@@ -92,16 +89,15 @@ class Polygon {
     */
     split(intersections, intersectedEdges) {
         // if there are no intersections, return the original polygon
-        if (intersections.length == 0)
-            return this;
+        if (intersections.length == 0) return this;
 
         let halfPolygon = (start, finish) => {
             let vertexes = [intersections[start]]; // add first intersection
             let n = this.edges.length;
-            for (let i = (intersectedEdges[start] + 1) % n; i != intersectedEdges[finish]; i = (i + 1) % n)
+            for (let i = (intersectedEdges[start] + 1) % n; i != intersectedEdges[finish]; i = (i + 1) % n) {
                 vertexes.push(this.edges[i][0]);
-            vertexes = vertexes.concat([this.edges[intersectedEdges[finish]][0], intersections[finish]]);
-            return vertexes;
+            }
+            return vertexes.concat([this.edges[intersectedEdges[finish]][0], intersections[finish]]);
         }
 
         return [new Polygon(halfPolygon(0, 1)), new Polygon(halfPolygon(1, 0))]
@@ -116,13 +112,13 @@ class Polygon {
      */
     contains(point) {
         let cnt = 0;
-        for (let i = 0; i < this.edges.length; i++) {
-            let [a, b] = this.edges[i];
-            if (a.y == b.y) continue;
+        this.edges.forEach(edge => {
+            let [a, b] = edge
+            if (a.y == b.y) return;
             let x = (point.y - a.y) / (b.y - a.y) * (b.x - a.x) + a.x;
             if (a.y >= point.y && point.y > b.y && x > point.x) cnt++;
             if (b.y >= point.y && point.y > a.y && x > point.x) cnt++;
-        }
+        })
         return cnt % 2 == 1;
     }
 
@@ -130,14 +126,15 @@ class Polygon {
      * ARGS: 
      *      edgeNum: int - the number of the edge to pick the point on
      * RETURNS:
-     *      p5.Vector - the resulting point
+     *      p5.Vector:  the resulting point
      */
     pickPoint(edgeNum) {
-        //print(this.edges, edgeNum);
+        // print(this.edges, edgeNum);
         let [x1, y1] = [this.edges[edgeNum][0].x, this.edges[edgeNum][0].y];
         let [x2, y2] = [this.edges[edgeNum][1].x, this.edges[edgeNum][1].y];
-        if (abs(x1-x2) < EPS)
+        if (abs(x1 - x2) < EPS) {
             return createVector(x1, random(min(y1, y2), max(y1, y2)));
+        }
         let x = random(min(x1, x2), max(x1, x2));
         let y = (x - x1) * (y1 - y2) / (x1 - x2) + y1;
         return createVector(x, y);

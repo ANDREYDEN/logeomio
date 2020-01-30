@@ -59,42 +59,30 @@ class Logo {
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
         while (bigPolygons.length) {
-            let polygon = bigPolygons[bigPolygons.length - 1];
+            let polygon = bigPolygons.pop();
             let currentArea = polygon.area();
             
-            // pick to BIGGEST edges of the polygon
-            let intersectedEdges = [0, 1];
-            let edgeLengths = [0, 0];
-            for (let i = 0; i < polygon.edges.length; i++) {
-                let vertex1 = polygon.edges[i][0];
-                let vertex2 = polygon.edges[i][1];
-                let distance = vertex1.dist(vertex2);
-                if (distance > edgeLengths[0]) {
-                    edgeLengths[1] = edgeLengths[0];
-                    edgeLengths[0] = distance;
-                    intersectedEdges[1] = intersectedEdges[0];
-                    intersectedEdges[0] = i;
-                } else if (distance > edgeLengths[1]) {
-                    edgeLengths[1] = distance;
-                    intersectedEdges[1] = i;
+            // pick 2 BIGGEST edges of the polygon
+            let top2Edges = [0, 1];
+            polygon.edges.forEach((edge, i) => {
+                if (i === 0) return
+                let newLength = Polygon.edgeLen(edge)
+                let top2Lengths = top2Edges.map(idx => Polygon.edgeLen(polygon.edges[idx]))
+                if (newLength > top2Lengths[0]) {
+                    top2Edges = [i, top2Edges[0]]
+                } else if (newLength > top2Lengths[1]) {
+                    top2Edges = [top2Edges[0], i]
                 }
-            }
+            })
             
-            // pick to points on those edges
-            let intersections = [polygon.pickPoint(intersectedEdges[0]),
-                                 polygon.pickPoint(intersectedEdges[1])];
+            let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
+            let subPolygons = polygon.split(intersections, top2Edges)
             
-            let subPolygons = polygon.split(intersections, intersectedEdges);
-            
-            // if a subpolygon is still big enough, push it to bigPoygons
-            // else push it to the resultingPolygons
-            bigPolygons.pop();
+            // continue dividing if the polygon is still big enough
             if (currentArea < areaThreshold) {
-                resultingPolygons.push(subPolygons[0]);
-                resultingPolygons.push(subPolygons[1]);
+                resultingPolygons.push(...subPolygons)
             } else {
-                bigPolygons.push(subPolygons[0]);
-                bigPolygons.push(subPolygons[1]);
+                bigPolygons.push(...subPolygons)
             }
         }
         print('finished dividing');
