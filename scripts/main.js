@@ -17,7 +17,7 @@ function displayLogo() {
         logo.fillIn();
         // scale the canvas so that the logo width is reasonable
         scale(scaleFactor);
-        logo.draw(filledOnly=true);
+        logo.draw();
     }
 
     return false;

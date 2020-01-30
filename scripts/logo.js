@@ -79,14 +79,11 @@ class Logo {
             let subPolygons = polygon.split(intersections, top2Edges)
             
             // continue dividing if the polygon is still big enough
-            if (currentArea < areaThreshold) {
-                resultingPolygons.push(...subPolygons)
-            } else {
-                bigPolygons.push(...subPolygons)
-            }
+            let somePolygons = currentArea < areaThreshold ? resultingPolygons : bigPolygons
+            somePolygons.push(...subPolygons)
         }
-        print('finished dividing');
         this.polygons = resultingPolygons;
+        print('finished dividing. Size: ' + this.polygons.length);
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
@@ -94,7 +91,7 @@ class Logo {
         // draw the actual word
         fill(RED, 0, 0);
         text(this.word, this.width / 2, this.height / 2);
-
+        print(this.height * this.width / pixelDistance)
         // fill those polygons that intersect the word
         loadPixels();
         for (let y = 0; y < this.height; y += pixelDistance)
@@ -116,12 +113,11 @@ class Logo {
     *
     */
     draw(filledOnly=false) {
-        for (let polygon of this.polygons)
-            if (filledOnly) {
-                if (polygon.filled)
-                    polygon.draw();  
-            } else {
+        stroke(255, 0, 0)
+        this.polygons.forEach(polygon => {
+            if (!filledOnly || polygon.filled) {
                 polygon.draw();  
             }          
+        })
     }
 }

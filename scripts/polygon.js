@@ -130,8 +130,9 @@ class Polygon {
      */
     pickPoint(edgeNum) {
         // print(this.edges, edgeNum);
-        let [x1, y1] = [this.edges[edgeNum][0].x, this.edges[edgeNum][0].y];
-        let [x2, y2] = [this.edges[edgeNum][1].x, this.edges[edgeNum][1].y];
+        let [a, b] = this.edges[edgeNum]
+        let [x1, y1] = a.array()
+        let [x2, y2] = b.array()
         if (abs(x1 - x2) < EPS) {
             return createVector(x1, random(min(y1, y2), max(y1, y2)));
         }
@@ -144,11 +145,11 @@ class Polygon {
     draw() {
         fill(this.filled ? 0 : 255);
         beginShape();
-        for (let edge of this.edges) {
-            let [a, b] = edge;
-            vertex(a.x, a.y);
-            vertex(b.x, b.y);
-        }
+        this.edges.forEach(edge => {
+            let [a, b] = edge
+            vertex(a.x, a.y)
+            vertex(b.x, b.y)
+        })
         endShape(CLOSE);
     }
 }
