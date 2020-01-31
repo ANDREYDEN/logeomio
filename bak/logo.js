@@ -91,21 +91,36 @@ class Logo {
         // draw the actual word
         fill(RED, 0, 0);
         text(this.word, this.width / 2, this.height / 2);
-        print(this.height * this.width / pixelDistance)
-        // fill those polygons that intersect the word
-        loadPixels();
-        for (let y = 0; y < this.height; y += pixelDistance)
-            for (let x = 0; x < this.width; x += pixelDistance) 
-                if (pixels[(x + y * width) * 4] == RED && 
-                    pixels[(x + y * width) * 4 + 1] == 0) {
-                    for (let p of this.polygons)
-                        if (p.contains(createVector(x, y))) {
-                            p.filled = true;
-                            break;
-                        }      
+
+        return new Promise((resolve, reject) => {
+            let worker = new Worker("js/computation.js")
+    
+            function handleCompletion(message) {
+                if (message.data.exit === 0) {
+                    this.polygons = message.data.polygons
+                    background(255);
+                    print('Filled: ', this.height * this.width / pixelDistance)
+                    worker.removeEventListener("message", handleCompletion)
+                    resolve("success")
                 }
-        background(255);
+            }
+    
+            worker.addEventListener("message", handleCompletion)
+    
+            // fill those polygons that intersect the word
+            loadPixels();
+            print(pixels.filter(val => val), this.polygons, this.width, this.height)
+            worker.postMessage({ 
+                pixels: pixels,
+                polygons: null,
+                width: this.width,
+                height: this.height,
+                RED: RED
+            })
+        })
     }
+
+    
 
     /* FUNCTION: draws all polygons on a p5 canvas 
     *  ARGS:

@@ -1,7 +1,7 @@
 let logo;
 
 function displayLogo() {
-    let word = document.getElementById("word_input").value;
+    let word = document.getElementById("word-input").value;
     let errorMessage = document.getElementById("errorMessage");
     errorMessage.innerHTML = "";
     

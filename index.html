@@ -4,10 +4,10 @@
     <head>
         <link rel="stylesheet" href="styles/main.css">
         <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js'></script>
-        <script src='scripts/consts.js'></script>
-        <script src='scripts/polygon.js'></script>
-        <script src='scripts/logo.js'></script>
-        <script src='scripts/main.js'></script>
+        <script src='js/consts.js'></script>
+        <script src='js/polygon.js'></script>
+        <script src='js/logo.js'></script>
+        <script src='js/main.js'></script>
         <title>Logeomio</title>
     </head>
     <body>
@@ -18,7 +18,7 @@
         <main>
             <form onsubmit="return displayLogo();">
                 <label>Enter a word: </label><br>
-                <input type="text" id="word_input" class="textbox" value="Hello"><br>
+                <input type="text" id="word-input" class="textbox" value="Hello"><br>
                 <p id="errorMessage"></p>
                 <input type="submit" class="button" value="Create">
                 <div id="sketch"></div>
