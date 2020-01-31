@@ -13,11 +13,11 @@ function displayLogo() {
         resizeCanvas(width, int(scaleFactor * logo.height), false); // f***ing floats
         
         // routine
-        logo.dividePolygons();
-        logo.fillIn();
+        logo.dividePolygons()
+        logo.fillIn()
         // scale the canvas so that the logo width is reasonable
-        scale(scaleFactor);
-        logo.draw();
+        scale(scaleFactor)
+        logo.draw(filledOnly=true)
     }
 
     return false;

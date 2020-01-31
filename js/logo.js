@@ -121,7 +121,7 @@ class Logo {
     *
     */
     draw(filledOnly=false) {
-        stroke(255, 0, 0)
+        //stroke(255, 0, 0)
         this.polygons.forEach(polygon => {
             if (!filledOnly || polygon.filled) {
                 polygon.draw();  
