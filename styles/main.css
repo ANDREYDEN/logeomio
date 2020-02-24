@@ -5,6 +5,9 @@
 
 body {
     margin: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -60,6 +63,11 @@ input[type="button"], input[type="submit"] {
     width: 100px;
 }
 
+input[type="button"]:disabled, input[type="submit"]:disabled {
+    background-color: gray;
+    cursor: auto;
+}
+
 #errorMessage {
     color: LOGO_COLOR;
 }
@@ -73,6 +81,8 @@ input[type="button"], input[type="submit"] {
 
 footer {
     margin-top: 2em;
+    justify-self: flex-end;
+
 }
 
 footer a {

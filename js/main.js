@@ -20,10 +20,12 @@ function validateAndFormat() {
 function toggleLoadingScreen() {
     const canv = document.getElementById('sketch')
     const loading = document.getElementById('loading')
-    const isLoading = canv.style.display === 'none'
+    const submitButton = document.getElementById('submit')
+    const wasLoading = canv.style.display === 'none'
 
-    canv.style.display = isLoading ? 'block' : 'none'
-    loading.style.display = isLoading ? 'none' : 'block'
+    canv.style.display = wasLoading ? 'block' : 'none'
+    loading.style.display = wasLoading ? 'none' : 'block'
+    submitButton.disabled = !wasLoading
 }
 
 function displayLogo(word) {
