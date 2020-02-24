@@ -1,27 +1,45 @@
 let logo;
 
+/* FUNCTION: checks if the input word is in the correct format
+ * RETURNS:
+ *      float - the area of the polygon
+ */
+function validateAndFormat() {
+    let word = document.getElementById("word-input").value
+    word = word && word.trim()
 
-function displayLogo() {
-    let word = document.getElementById("word-input").value;
-    let errorMessage = document.getElementById("errorMessage");
+    let errorMessage = document.getElementById("errorMessage")
     errorMessage.innerHTML = "";
 
-    if (word.length < 2 || word.length > 15) {
-        errorMessage.innerHTML = "The name should be from 2 to 15 characters long";
-    } else {
-        logo = new Logo(word);
-        scaleFactor = width / logo.width;
-        resizeCanvas(width, int(scaleFactor * logo.height), false);
-
-        // routine
-        logo.dividePolygons()
-        logo.fillIn()
-
-        // scale the canvas so that the logo width is reasonable
-        scale(scaleFactor)
-        logo.draw(filledOnly = true)
+    if (word.length < MIN_TEXT_LENGTH || word.length > MAX_TEXT_LENGTH) {
+        errorMessage.innerHTML = `The name should be from ${MIN_TEXT_LENGTH} to ${MAX_TEXT_LENGTH} characters long`
     }
+    return errorMessage.innerHTML === "" ? word : ""
+}
 
+function displayLogo(word) {
+    logo = new Logo(word);
+    scaleFactor = width / logo.width;
+    resizeCanvas(width, int(scaleFactor * logo.height), false);
+
+    // routine
+    logo.dividePolygons()
+    logo.fillIn()
+
+    // scale the canvas so that the logo width is reasonable
+    scale(scaleFactor)
+    logo.draw(filledOnly = true)
+
+    return false;
+}
+
+//************************ P5 *************************/
+
+function onSubmit() {
+    const validationResult = validateAndFormat()
+    if (validationResult) {
+        displayLogo(validationResult)
+    }
     return false;
 }
 
@@ -34,11 +52,12 @@ function setup() {
     let canvas = createCanvas(int(WINDOW_CANVAS_RATIO * windowWidth) - 15, 200);
     canvas.parent("sketch");
 
-    strokeWeight(0.05);
+    // configuration
     textSize(TEXT_SIZE);
     textFont(FONT);
     textAlign(CENTER, CENTER);
     pixelDensity(1);
 
-    displayLogo();
+    // display initial word
+    onSubmit();
 }

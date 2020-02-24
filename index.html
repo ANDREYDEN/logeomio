@@ -2,6 +2,9 @@
 
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        
         <link rel="stylesheet" href="styles/main.css">
         <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js'></script>
         <script src='js/consts.js'></script>
@@ -18,7 +21,7 @@
         <main>
             <h1>Create you logo</h1>
             <br>
-            <form onsubmit="return displayLogo();">
+            <form onsubmit="return onSubmit();">
                 <label>Enter a word: </label><br>
                 <input type="text" id="word-input" value="Hello"><br>
                 <p id="errorMessage"></p>

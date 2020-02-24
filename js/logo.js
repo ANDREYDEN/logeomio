@@ -17,7 +17,8 @@ class Logo {
         ])];
     }
 
-    /* FUNCTION: initializes the polygons data structure by splitting them with random lines
+    /* (UNUSED)
+     * FUNCTION: initializes the polygons data structure by splitting them with random lines
      * ARGS: 
      *      n: int - number of lines to split the polygons with
      */
@@ -75,6 +76,7 @@ class Logo {
                 }
             })
 
+            // split the polygon in 2 smaller ones
             let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
             let subPolygons = polygon.split(intersections, top2Edges)
 
@@ -83,30 +85,34 @@ class Logo {
             somePolygons.push(...subPolygons)
         }
         this.polygons = resultingPolygons;
-        print('finished dividing. Size: ' + this.polygons.length);
+        print('Finished dividing. Total polygons: ' + this.polygons.length);
+    }
+
+    /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
+    drawWord() {
+        fill(LOGO_COLOR, 0, 0);
+        text(this.word, this.width / 2, this.height / 2);
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
     fillIn(pixelDistance = 1) {
-        // draw the actual word
-        fill(RED, 0, 0);
-        text(this.word, this.width / 2, this.height / 2);
-        print(this.height * this.width / pixelDistance)
+        this.drawWord()
 
         loadPixels();
-
         let filledPixels = []
-        for (let y = 0; y < this.height; y++)
-            for (let x = 0; x < this.width; x++)
-                if (pixels[(x + y * width) * 4] == RED &&
-                    pixels[(x + y * width) * 4 + 1] == 0) {
-                    filledPixels.push([x, y])
+        for (let y = 0; y < this.height; y += pixelDistance) {
+            for (let x = 0; x < this.width; x += pixelDistance) {
+                if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
+                    pixels[(x + y * width) * 4 + 1] === 0) {
+                    filledPixels.push(createVector(x, y))
                 }
+            }
+        }
 
-        // fill those polygons that conatin word pixels
-        filledPixels.forEach(([x, y]) => {
+        // fill those polygons that contain word pixels
+        filledPixels.forEach(filledPos => {
             for (let p of this.polygons) {
-                if (p.contains(createVector(x, y))) {
+                if (p.contains(filledPos)) {
                     p.filled = true;
                     break;
                 }
@@ -121,7 +127,6 @@ class Logo {
     *
     */
     draw(filledOnly = false) {
-        // stroke(255, 0, 0)
         this.polygons.forEach(polygon => {
             if (!filledOnly || polygon.filled) {
                 polygon.draw();
