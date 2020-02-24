@@ -112,14 +112,16 @@ class Logo {
         console.log('Determined filled pixels');
 
         // fill those polygons that contain word pixels
-        this.determineFilledPolygons({ polygons: this.polygons, filledPixels: filledPixels, afterFill: afterFill })
+        this.determineFilledPolygons({
+            polygons: this.polygons,
+            filledPixels: filledPixels,
+            afterFill: afterFill
+        })
 
         background(255);
     }
 
     determineFilledPolygons({ polygons, filledPixels, afterFill }) {
-        const fillingWorker = new Worker('js/fillPolygonsWorker.js')
-
         const handleCompletion = message => {
             const resultingPolygons = message.data.polygons
             resultingPolygons.forEach((polygon, i) => {

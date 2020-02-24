@@ -110,9 +110,9 @@ class Polygon {
      *      bool: true if point is inside the polygon,
      *            false otherwise
      */
-    contains(point) {
+    static contains(polygon, point) {
         let cnt = 0;
-        this.edges.forEach(edge => {
+        polygon.edges.forEach(edge => {
             let [a, b] = edge
             if (a.y == b.y) return;
             let x = (point.y - a.y) / (b.y - a.y) * (b.x - a.x) + a.x;

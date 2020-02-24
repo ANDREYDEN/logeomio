@@ -17,7 +17,18 @@ function validateAndFormat() {
     return errorMessage.innerHTML === "" ? word : ""
 }
 
+function toggleLoadingScreen() {
+    const canv = document.getElementById('sketch')
+    const loading = document.getElementById('loading')
+    const isLoading = canv.style.display === 'none'
+
+    canv.style.display = isLoading ? 'block' : 'none'
+    loading.style.display = isLoading ? 'none' : 'block'
+}
+
 function displayLogo(word) {
+    toggleLoadingScreen()
+
     logo = new Logo(word);
     scaleFactor = width / logo.width;
     resizeCanvas(width, int(scaleFactor * logo.height), false);
@@ -25,11 +36,12 @@ function displayLogo(word) {
     // routine
     logo.dividePolygons()
     print('Finished dividing. Total polygons: ' + logo.polygons.length);
+
     logo.fillIn(() => {
         // scale the canvas so that the logo width is reasonable
+        toggleLoadingScreen()
         scale(scaleFactor)
         logo.draw(filledOnly = true)
-        console.log('Finished drawing');
     })
     console.log('Finished filling');
 
