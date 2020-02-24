@@ -4,7 +4,6 @@
 }
 
 body {
-    width: 85%;
     margin: auto;
 }
 
@@ -12,7 +11,7 @@ h1 {
     font-size: 3em;
 }
 
-/*****************HEADER****************/
+/***************** HEADER ****************/
 
 header, footer {
     background: black;
@@ -25,7 +24,12 @@ header {
     margin-bottom: 2em;
 }
 
-/*****************MAIN****************/
+/***************** MAIN ****************/
+
+main {
+    width: 85%;
+    margin: auto;
+}
 
 label {
     font-size: 1.25em;
@@ -34,26 +38,33 @@ label {
 input {
     margin-top: 0.25em;
     margin-bottom: 0.25em;
+    border-radius: 5px;
+    padding: 0.25em;
 }
 
-input.textbox {
+input[type="text"] {
     height: 25px;
     width: 50%;
     font-size: 1.25em;
-}
-
-input.button {
-    height: 25px;
-    font-size: 1.25em;
-    border-radius: 5px;
     outline: none;
+    border: 1px solid black;
 }
 
-p#errorMessage {
+input[type="button"], input[type="submit"] {
+    background-color: black;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    font-size: 1.25em;
+    outline: none;
+    width: 100px;
+}
+
+#errorMessage {
     color: red;
 }
 
-div#sketch {
+#sketch {
     border: 1px solid black;
     margin: auto;
 }

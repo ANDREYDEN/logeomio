@@ -143,8 +143,9 @@ class Polygon {
 
     /* FUNCTION: draws a polygon (filled or unfilled depending on the filled property)*/
     draw() {
-        fill(this.filled ? 0 : 255);
-        beginShape();
+        fill(this.filled ? 0 : 255)
+        // noFill()
+        beginShape()
         this.edges.forEach(edge => {
             let [a, b] = edge
             vertex(a.x, a.y)

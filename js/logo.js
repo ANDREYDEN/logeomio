@@ -92,7 +92,6 @@ class Logo {
         fill(RED, 0, 0);
         text(this.word, this.width / 2, this.height / 2);
         print(this.height * this.width / pixelDistance)
-        clg
 
         loadPixels();
 
@@ -122,7 +121,7 @@ class Logo {
     *
     */
     draw(filledOnly = false) {
-        //stroke(255, 0, 0)
+        // stroke(255, 0, 0)
         this.polygons.forEach(polygon => {
             if (!filledOnly || polygon.filled) {
                 polygon.draw();

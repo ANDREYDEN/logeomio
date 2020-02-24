@@ -16,13 +16,15 @@
             <h2><i>Simple. Geometric.</i></h2>
         </header>
         <main>
+            <h1>Create you logo</h1>
+            <br>
             <form onsubmit="return displayLogo();">
                 <label>Enter a word: </label><br>
-                <input type="text" id="word-input" class="textbox" value="Hello"><br>
+                <input type="text" id="word-input" value="Hello"><br>
                 <p id="errorMessage"></p>
-                <input type="submit" class="button" value="Create">
+                <input type="submit" value="Create">
                 <div id="sketch"></div>
-                <input type="button" class="button" value="Save" onclick="saveCanvas('logo', 'png')">
+                <input type="button" value="Save" onclick="saveCanvas('logo', 'png')">
             </form>
         </main>
         <footer>
