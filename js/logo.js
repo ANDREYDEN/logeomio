@@ -94,7 +94,7 @@ class Logo {
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
-    fillIn(pixelDistance = 1) {
+    fillIn(afterFill, pixelDistance = 1) {
         this.drawWord()
 
         loadPixels();
@@ -104,7 +104,7 @@ class Logo {
             for (let x = 0; x < this.width; x += pixelDistance) {
                 if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
                     pixels[(x + y * width) * 4 + 1] === 0) {
-                    filledPixels.push(createVector(x, y))
+                    filledPixels.push({ x: x, y: y })
                 }
             }
         }
@@ -112,20 +112,33 @@ class Logo {
         console.log('Determined filled pixels');
 
         // fill those polygons that contain word pixels
-        this.determineFilledPolygons({ polygons: this.polygons, filledPixels: filledPixels })
+        this.determineFilledPolygons({ polygons: this.polygons, filledPixels: filledPixels, afterFill: afterFill })
 
         background(255);
     }
 
-    determineFilledPolygons({ polygons, filledPixels }) {
-        filledPixels.forEach(filledPos => {
-            for (let p of polygons) {
-                if (p.contains(filledPos)) {
-                    p.filled = true;
-                    break;
-                }
+    determineFilledPolygons({ polygons, filledPixels, afterFill }) {
+        const fillingWorker = new Worker('js/fillPolygonsWorker.js')
+
+        const handleCompletion = message => {
+            const resultingPolygons = message.data.polygons
+            resultingPolygons.forEach((i, polygon) => {
+                polygons[i].filled = polygon.filled
+            })
+            afterFill()
+
+            fillingWorker.removeEventListener('message', handleCompletion)
+        }
+
+        fillingWorker.addEventListener('message', handleCompletion)
+
+        const formatedPolygons = polygons.map(polygon => {
+            return {
+                edges: polygon.edges.map(edge => [{ x: edge[0].x, y: edge[0].y }, { x: edge[1].x, y: edge[1].y }]),
+                filled: false
             }
         })
+        fillingWorker.postMessage({ polygons: formatedPolygons, filledPixels: filledPixels })
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 

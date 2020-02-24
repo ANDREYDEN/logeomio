@@ -25,13 +25,15 @@ function displayLogo(word) {
     // routine
     logo.dividePolygons()
     print('Finished dividing. Total polygons: ' + logo.polygons.length);
-    logo.fillIn()
+    logo.fillIn(() => {
+        // scale the canvas so that the logo width is reasonable
+        scale(scaleFactor)
+        logo.draw(filledOnly = true)
+        console.log('Finished drawing');
+    })
     console.log('Finished filling');
 
-    // scale the canvas so that the logo width is reasonable
-    scale(scaleFactor)
-    logo.draw(filledOnly = true)
-    console.log('Finished drawing');
+
 
     return false;
 }
