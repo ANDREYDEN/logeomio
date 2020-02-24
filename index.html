@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
@@ -22,8 +22,8 @@
             <h1>Create you logo</h1>
             <br>
             <form onsubmit="return onSubmit();">
-                <label>Enter a word: </label><br>
-                <input type="text" id="word-input" value="Hello"><br>
+                <label for="word-input">Enter a word: </label><br>
+                <input type="text" id="word-input" name="logo" value="Hello"><br>
                 <p id="errorMessage"></p>
                 <input type="submit" id="submit" value="Create">
                 <div id="sketch"></div>
