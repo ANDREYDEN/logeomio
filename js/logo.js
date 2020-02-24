@@ -85,7 +85,6 @@ class Logo {
             somePolygons.push(...subPolygons)
         }
         this.polygons = resultingPolygons;
-        print('Finished dividing. Total polygons: ' + this.polygons.length);
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
@@ -99,6 +98,7 @@ class Logo {
         this.drawWord()
 
         loadPixels();
+        console.log('Pixels loaded');
         let filledPixels = []
         for (let y = 0; y < this.height; y += pixelDistance) {
             for (let x = 0; x < this.width; x += pixelDistance) {
@@ -109,16 +109,23 @@ class Logo {
             }
         }
 
+        console.log('Determined filled pixels');
+
         // fill those polygons that contain word pixels
+        this.determineFilledPolygons({ polygons: this.polygons, filledPixels: filledPixels })
+
+        background(255);
+    }
+
+    determineFilledPolygons({ polygons, filledPixels }) {
         filledPixels.forEach(filledPos => {
-            for (let p of this.polygons) {
+            for (let p of polygons) {
                 if (p.contains(filledPos)) {
                     p.filled = true;
                     break;
                 }
             }
         })
-        background(255);
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 
