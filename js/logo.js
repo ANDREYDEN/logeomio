@@ -8,7 +8,7 @@ class Logo {
         this.word = word;
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
-        this.height = 2*bounds.h;
+        this.height = 2 * bounds.h;
         this.polygons = [new Polygon([
             createVector(0, 0),
             createVector(this.width, 0),
@@ -30,7 +30,7 @@ class Logo {
             let side2 = Math.floor(random(4));
             // if the sides are same, make them different
             if (side1 == side2)
-                side1 = (side1 + 1)%4;
+                side1 = (side1 + 1) % 4;
             let pointOnRect = (side) => {
                 if (side == 0)
                     return createVector(random(this.width), 0);
@@ -54,14 +54,14 @@ class Logo {
      * ARGS: 
      *      n: int - number of times to divide the polygons in half
      */
-    dividePolygons(areaThreshold=MIN_AREA) {
+    dividePolygons(areaThreshold = MIN_AREA) {
         // consider only the polygons with big area
         let bigPolygons = this.polygons;
         let resultingPolygons = [];
         while (bigPolygons.length) {
             let polygon = bigPolygons.pop();
             let currentArea = polygon.area();
-            
+
             // pick 2 BIGGEST edges of the polygon
             let top2Edges = [0, 1];
             polygon.edges.forEach((edge, i) => {
@@ -74,10 +74,10 @@ class Logo {
                     top2Edges = [top2Edges[0], i]
                 }
             })
-            
+
             let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
             let subPolygons = polygon.split(intersections, top2Edges)
-            
+
             // continue dividing if the polygon is still big enough
             let somePolygons = currentArea < areaThreshold ? resultingPolygons : bigPolygons
             somePolygons.push(...subPolygons)
@@ -87,22 +87,23 @@ class Logo {
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
-    fillIn(pixelDistance=1) {
+    fillIn(pixelDistance = 1) {
         // draw the actual word
         fill(RED, 0, 0);
         text(this.word, this.width / 2, this.height / 2);
         print(this.height * this.width / pixelDistance)
+        clg
 
         loadPixels();
-        
+
         let filledPixels = []
         for (let y = 0; y < this.height; y++)
             for (let x = 0; x < this.width; x++)
                 if (pixels[(x + y * width) * 4] == RED &&
                     pixels[(x + y * width) * 4 + 1] == 0) {
-                        filledPixels.push([x, y])
-                    }
-                    
+                    filledPixels.push([x, y])
+                }
+
         // fill those polygons that conatin word pixels
         filledPixels.forEach(([x, y]) => {
             for (let p of this.polygons) {
@@ -120,12 +121,12 @@ class Logo {
     *       filledOnly: bool - draw only filled polygons
     *
     */
-    draw(filledOnly=false) {
+    draw(filledOnly = false) {
         //stroke(255, 0, 0)
         this.polygons.forEach(polygon => {
             if (!filledOnly || polygon.filled) {
-                polygon.draw();  
-            }          
+                polygon.draw();
+            }
         })
     }
 }
