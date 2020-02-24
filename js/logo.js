@@ -122,7 +122,7 @@ class Logo {
 
         const handleCompletion = message => {
             const resultingPolygons = message.data.polygons
-            resultingPolygons.forEach((i, polygon) => {
+            resultingPolygons.forEach((polygon, i) => {
                 polygons[i].filled = polygon.filled
             })
             afterFill()
