@@ -121,6 +121,12 @@ class Logo {
         background(255);
     }
 
+    /* FUNCTION: computes the filled property for each polygon based on the filledPixels in a separate Worker 
+     * ARGS:
+     *      polygons: Array<Object> - array of polygons to process
+     *      filledPixels: Array<Object> - all the filled pixels in the image
+     *      afterFill: Function - executes after the computation is complete
+     */
     determineFilledPolygons({ polygons, filledPixels, afterFill }) {
         const fillingWorker = new Worker('js/fillPolygonsWorker.js')
 
@@ -132,7 +138,7 @@ class Logo {
         fillingWorker.processData({
             data: {
                 polygons: formatedPolygons,
-                filledPixels
+                filledPixels: filledPixels
             },
             onComplete: data => {
                 const resultingPolygons = data.polygons

@@ -54,7 +54,7 @@ class Polygon {
     *      float - the perimeter of the polygon
     */
     perimeter() {
-        return this.edges.LOGO_COLORuce((sum, edge) => sum + edge[0].dist(edge[1]), 0)
+        return this.edges.reduce((sum, edge) => sum + edge[0].dist(edge[1]), 0)
     }
 
     /* FUNCTION: finds the points of intersection if any by a given line
