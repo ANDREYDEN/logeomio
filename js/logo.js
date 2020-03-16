@@ -122,25 +122,26 @@ class Logo {
     }
 
     determineFilledPolygons({ polygons, filledPixels, afterFill }) {
-        const handleCompletion = message => {
-            const resultingPolygons = message.data.polygons
-            resultingPolygons.forEach((polygon, i) => {
-                polygons[i].filled = polygon.filled
-            })
-            afterFill()
+        const fillingWorker = new Worker('js/fillPolygonsWorker.js')
 
-            fillingWorker.removeEventListener('message', handleCompletion)
-        }
+        const formatedPolygons = polygons.map(polygon => ({
+            edges: polygon.edges.map(edge => [{ x: edge[0].x, y: edge[0].y }, { x: edge[1].x, y: edge[1].y }]),
+            filled: false
+        }))
 
-        fillingWorker.addEventListener('message', handleCompletion)
-
-        const formatedPolygons = polygons.map(polygon => {
-            return {
-                edges: polygon.edges.map(edge => [{ x: edge[0].x, y: edge[0].y }, { x: edge[1].x, y: edge[1].y }]),
-                filled: false
+        fillingWorker.processData({
+            data: {
+                polygons: formatedPolygons,
+                filledPixels
+            },
+            onComplete: data => {
+                const resultingPolygons = data.polygons
+                resultingPolygons.forEach((polygon, i) => {
+                    polygons[i].filled = polygon.filled
+                })
+                afterFill()
             }
         })
-        fillingWorker.postMessage({ polygons: formatedPolygons, filledPixels: filledPixels })
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 

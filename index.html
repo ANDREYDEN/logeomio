@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="styles/main.css">
         <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js'></script>
         <script src='js/consts.js'></script>
+        <script src='js/extend.js'></script>
         <script src='js/polygon.js'></script>
         <script src='js/logo.js'></script>
         <script src='js/main.js'></script>
@@ -25,13 +26,15 @@
                 <label for="word-input">Enter a word: </label><br>
                 <input type="text" id="word-input" name="logo" value="Hello"><br>
                 <p id="errorMessage"></p>
+
                 <input type="submit" id="submit" value="Create">
-                <div id="sketch"></div>
-                <div id="loading">
-                    <p>Loading...</p>
-                </div>
-                <input type="button" value="Save" onclick="saveCanvas('logo', 'png')">
+                
             </form>
+            <div id="sketch"></div>
+            <div id="loading">
+                <p>Loading...</p>
+            </div>
+            <input type="button" value="Save" onclick="saveCanvas('logo', 'png')">
         </main>
         <footer>
             <p>Contribute <a href="https://github.com/ANDREYDEN/logeomio" target="_blank">here</a></p>

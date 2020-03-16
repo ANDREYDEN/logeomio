@@ -8,5 +8,3 @@ const WINDOW_CANVAS_RATIO = 0.85
 const MIN_TEXT_LENGTH = 3
 const MAX_TEXT_LENGTH = 15
 let FONT
-
-const fillingWorker = new Worker('js/fillPolygonsWorker.js')
