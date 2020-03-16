@@ -1,7 +1,7 @@
 class Polygon {
     /* FUNCTION: constructor
      * ARGS: 
-     *      vertexes: p5.Vector[] - points that define the polygon
+     *      vertexes: Vector[] - points that define the polygon
      */
     constructor(vertexes) {
         this.edges = [];
@@ -14,9 +14,9 @@ class Polygon {
 
     /* FUNCTION: finds segment-line intersection
      * ARGS: 
-     *      segment, line: [p5.Vector, p5.Vector] - points that define the segment and the line
+     *      segment, line: [Vector, Vector] - points that define the segment and the line
      * RETURNS:
-     *      p5.Vector - coordinates of the intersection, or null if there is no intersection
+     *      Vector - coordinates of the intersection, or null if there is no intersection
      */
     static intersect(edge, line) {
         let [x1, y1] = [edge[0].x, edge[0].y];
@@ -32,7 +32,7 @@ class Polygon {
         let y = (x - x3) * (y3 - y4) / (x3 - x4) + y3;
         if (((x - x1 > -EPS && x2 - x > -EPS) || (x1 - x > -EPS && x - x2 > -EPS)) &&
             ((y - y1 > -EPS && y2 - y > -EPS) || (y1 - y > -EPS && y - y2 > -EPS)))
-            return createVector(x, y);
+            return new Vector(x, y);
     }
 
     /* FUNCTION: returns the length of the edge */
@@ -59,9 +59,9 @@ class Polygon {
 
     /* FUNCTION: finds the points of intersection if any by a given line
      * ARGS: 
-     *      a, b: p5.Vectors - points that define a splitting line
+     *      a, b: Vectors - points that define a splitting line
      * RETURNS:
-     *      [[p5.Vector, p5.Vector], [int, int]] - points of intersection and the respetive edge numbers
+     *      [[Vector, Vector], [int, int]] - points of intersection and the respetive edge numbers
      */
     intersectByLine(a, b) {
         let intersections = []; // coordinates of intersections
@@ -80,7 +80,7 @@ class Polygon {
 
     /* FUNCTION: splits the polygon given the points of splitting
     * ARGS:
-    *      intersections: [p5.Vector, p5.Vector] - points (0 or 2) to split the polygon by
+    *      intersections: [Vector, Vector] - points (0 or 2) to split the polygon by
     *      intersectedEdges: [int, int] - numbers (0 or 2) of the lines that contain the intersections
     * RETURNS:
     *      Polygon[]: array of polygons as a result of splitting,
@@ -105,7 +105,7 @@ class Polygon {
 
     /* FUNCTION: checks if a given polygon contains a given point
      * ARGS: 
-     *      point: p5.Vector - a point to be checked
+     *      point: Vector - a point to be checked
      * RETURNS:
      *      bool: true if point is inside the polygon,
      *            false otherwise
@@ -126,19 +126,19 @@ class Polygon {
      * ARGS: 
      *      edgeNum: int - the number of the edge to pick the point on
      * RETURNS:
-     *      p5.Vector:  the resulting point
+     *      Vector:  the resulting point
      */
     pickPoint(edgeNum) {
         // print(this.edges, edgeNum);
         let [a, b] = this.edges[edgeNum]
-        let [x1, y1] = a.array()
-        let [x2, y2] = b.array()
+        let [x1, y1] = a.toArray()
+        let [x2, y2] = b.toArray()
         if (abs(x1 - x2) < EPS) {
-            return createVector(x1, random(min(y1, y2), max(y1, y2)));
+            return new Vector(x1, random(min(y1, y2), max(y1, y2)));
         }
         let x = random(min(x1, x2), max(x1, x2));
         let y = (x - x1) * (y1 - y2) / (x1 - x2) + y1;
-        return createVector(x, y);
+        return new Vector(x, y);
     }
 
     /* FUNCTION: draws a polygon (filled or unfilled depending on the filled property)*/

@@ -1,4 +1,4 @@
-const importRes = importScripts('polygon.js')
+importScripts('polygon.js')
 
 onmessage = message => {
     const polygons = message.data.polygons

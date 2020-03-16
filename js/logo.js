@@ -10,10 +10,10 @@ class Logo {
         this.width = bounds.w + 2 * PADDING;
         this.height = 2 * bounds.h;
         this.polygons = [new Polygon([
-            createVector(0, 0),
-            createVector(this.width, 0),
-            createVector(this.width, this.height),
-            createVector(0, this.height)
+            new Vector(0, 0),
+            new Vector(this.width, 0),
+            new Vector(this.width, this.height),
+            new Vector(0, this.height)
         ])];
     }
 
@@ -34,13 +34,13 @@ class Logo {
                 side1 = (side1 + 1) % 4;
             let pointOnRect = (side) => {
                 if (side == 0)
-                    return createVector(random(this.width), 0);
+                    return new Vector(random(this.width), 0);
                 else if (side == 1)
-                    return createVector(this.width, random(this.height));
+                    return new Vector(this.width, random(this.height));
                 else if (side == 2)
-                    return createVector(random(this.width), this.height);
+                    return new Vector(random(this.width), this.height);
                 else
-                    return createVector(0, random(this.height));
+                    return new Vector(0, random(this.height));
             }
             let a = pointOnRect(side1), b = pointOnRect(side2);
             for (let polygon of this.polygons) {
@@ -130,19 +130,10 @@ class Logo {
     determineFilledPolygons({ polygons, filledPixels, afterFill }) {
         const fillingWorker = new Worker('js/fillPolygonsWorker.js')
 
-        const formatedPolygons = polygons.map(polygon => ({
-            edges: polygon.edges.map(edge => [{ x: edge[0].x, y: edge[0].y }, { x: edge[1].x, y: edge[1].y }]),
-            filled: false
-        }))
-
         fillingWorker.processData({
-            data: {
-                polygons: formatedPolygons,
-                filledPixels: filledPixels
-            },
+            data: { polygons, filledPixels },
             onComplete: data => {
-                const resultingPolygons = data.polygons
-                resultingPolygons.forEach((polygon, i) => {
+                data.polygons.forEach((polygon, i) => {
                     polygons[i].filled = polygon.filled
                 })
                 afterFill()
