@@ -9,12 +9,13 @@ class Logo {
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
         this.height = 2 * bounds.h;
-        this.polygons = [new Polygon([
+        this.polygonsToProcess = [new Polygon([
             new Vector(0, 0),
             new Vector(this.width, 0),
             new Vector(this.width, this.height),
             new Vector(0, this.height)
         ])];
+        this.resultingPolygons = []
     }
 
     /* (UNUSED)
@@ -43,11 +44,11 @@ class Logo {
                     return new Vector(0, random(this.height));
             }
             let a = pointOnRect(side1), b = pointOnRect(side2);
-            for (let polygon of this.polygons) {
+            for (let polygon of this.polygonsToProcess) {
                 let [intersections, intersectedEdges] = polygon.intersectByLine(a, b);
                 result = result.concat(polygon.split(intersections, intersectedEdges));
             }
-            this.polygons = result;
+            this.polygonsToProcess = result;
         }
     }
 
@@ -56,35 +57,42 @@ class Logo {
      *      n: int - number of times to divide the polygons in half
      */
     dividePolygons(areaThreshold = MIN_AREA) {
-        // consider only the polygons with big area
-        let bigPolygons = this.polygons;
-        let resultingPolygons = [];
-        while (bigPolygons.length) {
-            let polygon = bigPolygons.pop();
-            let currentArea = polygon.area();
-
-            // pick 2 BIGGEST edges of the polygon
-            let top2Edges = [0, 1];
-            polygon.edges.forEach((edge, i) => {
-                if (i === 0) return
-                let newLength = Polygon.edgeLen(edge)
-                let top2Lengths = top2Edges.map(idx => Polygon.edgeLen(polygon.edges[idx]))
-                if (newLength > top2Lengths[0]) {
-                    top2Edges = [i, top2Edges[0]]
-                } else if (newLength > top2Lengths[1]) {
-                    top2Edges = [top2Edges[0], i]
-                }
-            })
-
-            // split the polygon in 2 smaller ones
-            let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
-            let subPolygons = polygon.split(intersections, top2Edges)
-
-            // continue dividing if the polygon is still big enough
-            let somePolygons = currentArea < areaThreshold ? resultingPolygons : bigPolygons
-            somePolygons.push(...subPolygons)
+        while (this.polygonsToProcess.length) {
+            this.dividePolygon(areaThreshold)
         }
-        this.polygons = resultingPolygons;
+    }
+
+    dividePolygon(areaThreshold) {
+        if (this.polygonsToProcess.length === 0) return false;
+
+        const polygon = this.polygonsToProcess.pop()
+        let currentArea = polygon.area();
+
+        // pick 2 BIGGEST edges of the polygon
+        let top2Edges = [0, 1];
+        polygon.edges.forEach((edge, i) => {
+            if (i === 0) return
+            let newLength = Polygon.edgeLen(edge)
+            let top2Lengths = top2Edges.map(idx => Polygon.edgeLen(polygon.edges[idx]))
+            if (newLength > top2Lengths[0]) {
+                top2Edges = [i, top2Edges[0]]
+            } else if (newLength > top2Lengths[1]) {
+                top2Edges = [top2Edges[0], i]
+            }
+        })
+
+        // split the polygon in 2 smaller ones
+        let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
+        let subPolygons = polygon.split(intersections, top2Edges)
+
+        // continue dividing if the polygon is still big enough
+        if (currentArea < areaThreshold) {
+            this.resultingPolygons.push(...subPolygons)
+        } else {
+            this.polygonsToProcess.push(...subPolygons)
+        }
+
+        return true;
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
@@ -113,7 +121,7 @@ class Logo {
 
         // fill those polygons that contain word pixels
         this.determineFilledPolygons({
-            polygons: this.polygons,
+            polygons: this.resultingPolygons,
             filledPixels: filledPixels,
             afterFill: afterFill
         })
@@ -147,7 +155,7 @@ class Logo {
     *
     */
     draw(filledOnly = false) {
-        this.polygons.forEach(polygon => {
+        this.resultingPolygons.forEach(polygon => {
             if (!filledOnly || polygon.filled) {
                 polygon.draw();
             }
