@@ -16,6 +16,25 @@ class Logo {
             new Vector(0, this.height)
         ])];
         this.resultingPolygons = []
+        this.filledPixels = []
+    }
+
+    determineFilledPixels({ pixelDistance = 1 } = {}) {
+        this.drawWord()
+
+        loadPixels();
+        console.log('Pixels loaded');
+        for (let y = 0; y < this.height; y += pixelDistance) {
+            for (let x = 0; x < this.width; x += pixelDistance) {
+                if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
+                    pixels[(x + y * width) * 4 + 1] === 0) {
+                    this.filledPixels.push({ x: x, y: y })
+                }
+            }
+        }
+
+        console.log('Determined filled pixels');
+        background(255)
     }
 
     /* (UNUSED)
@@ -52,17 +71,14 @@ class Logo {
         }
     }
 
-    /* FUNCTION: initializes the polygons data structure by randomly dividing them in half
-     * ARGS: 
-     *      n: int - number of times to divide the polygons in half
-     */
-    dividePolygons(areaThreshold = MIN_AREA) {
+    /* FUNCTION: initializes the polygons data structure by randomly dividing them in half */
+    dividePolygons() {
         while (this.polygonsToProcess.length) {
-            this.dividePolygon(areaThreshold)
+            this.dividePolygon()
         }
     }
 
-    dividePolygon(areaThreshold) {
+    dividePolygon(areaThreshold = MIN_AREA) {
         if (this.polygonsToProcess.length === 0) return false;
 
         const polygon = this.polygonsToProcess.pop()
@@ -103,26 +119,9 @@ class Logo {
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
     fillIn(afterFill, pixelDistance = 1) {
-        this.drawWord()
-
-        loadPixels();
-        console.log('Pixels loaded');
-        let filledPixels = []
-        for (let y = 0; y < this.height; y += pixelDistance) {
-            for (let x = 0; x < this.width; x += pixelDistance) {
-                if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
-                    pixels[(x + y * width) * 4 + 1] === 0) {
-                    filledPixels.push({ x: x, y: y })
-                }
-            }
-        }
-
-        console.log('Determined filled pixels');
-
         // fill those polygons that contain word pixels
         this.determineFilledPolygons({
             polygons: this.resultingPolygons,
-            filledPixels: filledPixels,
             afterFill: afterFill
         })
 
@@ -135,11 +134,11 @@ class Logo {
      *      filledPixels: Array<Object> - all the filled pixels in the image
      *      afterFill: Function - executes after the computation is complete
      */
-    determineFilledPolygons({ polygons, filledPixels, afterFill }) {
+    determineFilledPolygons({ polygons, afterFill }) {
         const fillingWorker = new Worker('js/fillPolygonsWorker.js')
 
         fillingWorker.processData({
-            data: { polygons, filledPixels },
+            data: { polygons: this.resultingPolygons, filledPixels: this.filledPixels },
             onComplete: data => {
                 data.polygons.forEach((polygon, i) => {
                     polygons[i].filled = polygon.filled
@@ -147,6 +146,20 @@ class Logo {
                 afterFill()
             }
         })
+
+    }
+
+    determineFilledPolygonsSync() {
+        for (let polygon of this.resultingPolygons) {
+            for (const pixel of this.filledPixels) {
+                if (Polygon.contains(polygon, pixel)) {
+                    polygon.filled = true;
+                    break;
+                }
+            }
+        }
+
+        background(255);
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 

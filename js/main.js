@@ -1,4 +1,6 @@
+/** @type {Logo | undefined} */
 let logo;
+let scaleFactor = 1;
 const settings = {
     animationEnabled: false,
 };
@@ -45,6 +47,7 @@ function toggleLoadingScreen() {
 
 function displayLogo(word) {
     logo = new Logo(word);
+    logo.determineFilledPixels();
 
     if (settings.animationEnabled) {
         animationInProgress = true;
@@ -64,7 +67,7 @@ function displayLogo(word) {
         // scale the canvas so that the logo width is reasonable
         toggleLoadingScreen()
         scale(scaleFactor)
-        logo.draw(filledOnly = true)
+        logo.draw(filledOnly = false)
     })
     console.log('Finished filling');
 }
@@ -103,10 +106,7 @@ function draw() {
 
     // routine
     animationInProgress = logo.dividePolygon();
-    // TODO: this is expensive, we should only fill/unfill changed polygons
-    // logo.fillIn(() => {
-    //     // scale the canvas so that the logo width is reasonable
-    //     scale(scaleFactor);
-    //     logo.draw(filledOnly=true);
-    // });
+    logo.determineFilledPolygonsSync();
+    scale(scaleFactor)
+    logo.draw(filledOnly = true);
 }
