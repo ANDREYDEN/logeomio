@@ -29,11 +29,17 @@
                 <br>
                 <p id="errorMessage"></p>
 
-                <label>
-                    <input id="animation-setting" type="checkbox" onclick="toggleAnimation()" />
-                    With animation
-                </label>
-                <br/>
+                <div class="settings">
+                    <label>
+                        <input id="animation-setting" type="checkbox" onclick="toggleAnimation()" />
+                        With animation
+                    </label>
+
+                    <label>
+                        <input id="stroke-setting" type="checkbox" onclick="toggleStroke()" />
+                        With stroke
+                    </label>
+                </div>
 
                 <button id="submit">Create</button>
             </form>

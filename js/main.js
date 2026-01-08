@@ -3,6 +3,7 @@ let logo;
 let scaleFactor = 1;
 const settings = {
     animationEnabled: false,
+    strokeEnabled: false,
 };
 let animationInProgress = false;
 
@@ -29,7 +30,10 @@ function validateWord(word) {
 /** Turns animation on/off.  */
 function toggleAnimation() {
     settings.animationEnabled = !settings.animationEnabled;
-    console.log({ settings });
+}
+
+function toggleStroke() {
+    settings.strokeEnabled = !settings.strokeEnabled;
 }
 
 function toggleLoadingScreen() {
@@ -48,6 +52,13 @@ function toggleLoadingScreen() {
 function displayLogo(word) {
     logo = new Logo(word);
     logo.determineFilledPixels();
+
+    if (settings.strokeEnabled) {
+        strokeWeight(0.2);
+        stroke(255, 0, 0);
+    } else {
+        noStroke();
+    }
 
     if (settings.animationEnabled) {
         animationInProgress = true;
@@ -86,10 +97,6 @@ function setup() {
     // create the canvas and place it in a div
     let canvas = createCanvas(int(WINDOW_CANVAS_RATIO * windowWidth) - 15, 200);
     canvas.parent("sketch");
-
-    // animation
-    strokeWeight(0.2);
-    stroke(255, 0, 0);
 
     // configuration
     textSize(TEXT_SIZE);
