@@ -102,10 +102,17 @@ class Logo {
         let subPolygons = polygon.split(intersections, top2Edges)
 
         // continue dividing if the polygon is still big enough
-        if (currentArea < areaThreshold) {
-            this.resultingPolygons.push(...subPolygons)
-        } else {
-            this.polygonsToProcess.push(...subPolygons)
+        for (const subPolygon of subPolygons) {
+            if (currentArea < areaThreshold) {
+                this.resultingPolygons.push(subPolygon)
+            } else {
+                const subPolygonFilled = this.isFilled(subPolygon);
+                if (subPolygonFilled) {
+                    this.polygonsToProcess.push(subPolygon)
+                } else {
+                    this.resultingPolygons.push(subPolygon)
+                }
+            }
         }
 
         return true;
@@ -150,7 +157,7 @@ class Logo {
     }
 
     determineFilledPolygonsSync() {
-        for (let polygon of this.resultingPolygons) {
+        for (let polygon of [...this.resultingPolygons, ...this.polygonsToProcess]) {
             for (const pixel of this.filledPixels) {
                 if (Polygon.contains(polygon, pixel)) {
                     polygon.filled = true;
@@ -160,6 +167,15 @@ class Logo {
         }
 
         background(255);
+    }
+
+    isFilled(polygon) {
+        for (const pixel of this.filledPixels) {
+            if (Polygon.contains(polygon, pixel)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 

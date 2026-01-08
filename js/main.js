@@ -108,5 +108,5 @@ function draw() {
     animationInProgress = logo.dividePolygon();
     logo.determineFilledPolygonsSync();
     scale(scaleFactor)
-    logo.draw(filledOnly = true);
+    logo.draw(filledOnly = false);
 }
