@@ -142,11 +142,11 @@ class Polygon {
     }
 
     /* FUNCTION: draws a polygon (filled or unfilled depending on the filled property)*/
-    draw({ isProcessing = false } = {}) {
+    draw({ isProcessing = false, filledColor = 0, unfilledColor = 255 } = {}) {
         fill(
             this.filled 
-            ? isProcessing ? 128 : 0 
-            : 255
+            ? isProcessing ? 128 : filledColor 
+            : unfilledColor
         )
         strokeWeight(0.05);
 

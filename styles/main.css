@@ -69,7 +69,7 @@ input[type="button"]:disabled, input[type="submit"]:disabled {
 }
 
 #errorMessage {
-    color: LOGO_COLOR;
+    color: #ff5151;
 }
 
 .settings {

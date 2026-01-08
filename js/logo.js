@@ -4,11 +4,13 @@ class Logo {
      * ARGS: 
      *      word: string - a word to be displayed
      */
-    constructor(word) {
+    constructor(word, { withRandomColors = false } = {}) {
         this.word = word;
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
         this.height = 2 * bounds.h;
+        this.withRandomColors = withRandomColors;
+
         this.polygonsToProcess = [new Polygon([
             new Vector(0, 0),
             new Vector(this.width, 0),
@@ -21,13 +23,14 @@ class Logo {
     }
 
     determineFilledPixels({ pixelDistance = 1 } = {}) {
-        this.drawWord()
+        const wordColor = 145
+        this.drawWord(wordColor)
 
         loadPixels();
         console.log('Pixels loaded');
         for (let y = 0; y < this.height; y += pixelDistance) {
             for (let x = 0; x < this.width; x += pixelDistance) {
-                if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
+                if (pixels[(x + y * width) * 4] === wordColor &&
                     pixels[(x + y * width) * 4 + 1] === 0) {
                     this.filledPixels.push({ x: x, y: y })
                 }
@@ -36,6 +39,12 @@ class Logo {
 
         console.log('Determined filled pixels');
         background(255)
+    }
+
+    /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
+    drawWord(wordColor) {
+        fill(wordColor, 0, 0);
+        text(this.word, this.width / 2, this.height / 2);
     }
 
     /* (UNUSED)
@@ -119,12 +128,6 @@ class Logo {
         return true;
     }
 
-    /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
-    drawWord() {
-        fill(LOGO_COLOR, 0, 0);
-        text(this.word, this.width / 2, this.height / 2);
-    }
-
     isFilled(polygon) {
         for (const pixel of this.filledPixels) {
             if (Polygon.contains(polygon, pixel)) {
@@ -139,16 +142,30 @@ class Logo {
     *       filledOnly: bool - draw only filled polygons
     */
     draw(filledOnly = false) {
+        const filledColor = this.withRandomColors 
+            ? getRandomColor()
+            : LOGO_COLOR;
+
         for (const polygon of this.resultingPolygons) { 
             if (!filledOnly || polygon.filled) {
-                polygon.draw();
+                polygon.draw({ 
+                    filledColor, 
+                    unfilledColor: this.withRandomColors ? getRandomColor() : 255 
+                });
             }
         }
 
         for (const polygon of this.polygonsToProcess) { 
             if (!filledOnly || polygon.filled) {
-                polygon.draw({ isProcessing: true });
+                polygon.draw({ isProcessing: true, unfilledColor: getRandomColor() });
             }
         }
     }
+}
+
+function getRandomColor() {
+    colorMode(HSL);
+    const result = color(random(360), 50, 70);
+    colorMode(RGB);
+    return result;
 }
