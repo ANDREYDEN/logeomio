@@ -15,6 +15,7 @@ class Logo {
             new Vector(this.width, this.height),
             new Vector(0, this.height)
         ])];
+        /** @type {Polygon[]} */
         this.resultingPolygons = []
         this.filledPixels = []
     }
@@ -103,11 +104,11 @@ class Logo {
 
         // continue dividing if the polygon is still big enough
         for (const subPolygon of subPolygons) {
+            subPolygon.filled = this.isFilled(subPolygon);
             if (currentArea < areaThreshold) {
                 this.resultingPolygons.push(subPolygon)
             } else {
-                const subPolygonFilled = this.isFilled(subPolygon);
-                if (subPolygonFilled) {
+                if (subPolygon.filled) {
                     this.polygonsToProcess.push(subPolygon)
                 } else {
                     this.resultingPolygons.push(subPolygon)
@@ -124,51 +125,6 @@ class Logo {
         text(this.word, this.width / 2, this.height / 2);
     }
 
-    /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
-    fillIn(afterFill, pixelDistance = 1) {
-        // fill those polygons that contain word pixels
-        this.determineFilledPolygons({
-            polygons: this.resultingPolygons,
-            afterFill: afterFill
-        })
-
-        background(255);
-    }
-
-    /* FUNCTION: computes the filled property for each polygon based on the filledPixels in a separate Worker 
-     * ARGS:
-     *      polygons: Array<Object> - array of polygons to process
-     *      filledPixels: Array<Object> - all the filled pixels in the image
-     *      afterFill: Function - executes after the computation is complete
-     */
-    determineFilledPolygons({ polygons, afterFill }) {
-        const fillingWorker = new Worker('js/fillPolygonsWorker.js')
-
-        fillingWorker.processData({
-            data: { polygons: this.resultingPolygons, filledPixels: this.filledPixels },
-            onComplete: data => {
-                data.polygons.forEach((polygon, i) => {
-                    polygons[i].filled = polygon.filled
-                })
-                afterFill()
-            }
-        })
-
-    }
-
-    determineFilledPolygonsSync() {
-        for (let polygon of [...this.resultingPolygons, ...this.polygonsToProcess]) {
-            for (const pixel of this.filledPixels) {
-                if (Polygon.contains(polygon, pixel)) {
-                    polygon.filled = true;
-                    break;
-                }
-            }
-        }
-
-        background(255);
-    }
-
     isFilled(polygon) {
         for (const pixel of this.filledPixels) {
             if (Polygon.contains(polygon, pixel)) {
@@ -181,13 +137,18 @@ class Logo {
     /* FUNCTION: draws all polygons on a p5 canvas 
     *  ARGS:
     *       filledOnly: bool - draw only filled polygons
-    *
     */
     draw(filledOnly = false) {
-        this.resultingPolygons.forEach(polygon => {
+        for (const polygon of this.resultingPolygons) { 
             if (!filledOnly || polygon.filled) {
                 polygon.draw();
             }
-        })
+        }
+
+        for (const polygon of this.polygonsToProcess) { 
+            if (!filledOnly || polygon.filled) {
+                polygon.draw({ isProcessing: true });
+            }
+        }
     }
 }

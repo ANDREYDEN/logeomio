@@ -89,7 +89,7 @@ class Polygon {
     */
     split(intersections, intersectedEdges) {
         // if there are no intersections, return the original polygon
-        if (intersections.length == 0) return this;
+        if (intersections.length == 0) return [this];
 
         let halfPolygon = (start, finish) => {
             let vertexes = [intersections[start]]; // add first intersection
@@ -142,8 +142,12 @@ class Polygon {
     }
 
     /* FUNCTION: draws a polygon (filled or unfilled depending on the filled property)*/
-    draw() {
-        fill(this.filled ? 0 : 255)
+    draw({ isProcessing = false } = {}) {
+        fill(
+            this.filled 
+            ? isProcessing ? 128 : 0 
+            : 255
+        )
         strokeWeight(0.05);
 
         beginShape()

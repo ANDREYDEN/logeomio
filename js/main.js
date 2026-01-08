@@ -74,12 +74,9 @@ function displayLogo(word) {
     logo.dividePolygons()
     print('Finished dividing. Total polygons: ' + logo.resultingPolygons.length);
 
-    logo.fillIn(() => {
-        // scale the canvas so that the logo width is reasonable
-        toggleLoadingScreen()
-        scale(scaleFactor)
-        logo.draw(filledOnly = false)
-    })
+    toggleLoadingScreen()
+    scale(scaleFactor)
+    logo.draw(filledOnly = false)
     console.log('Finished filling');
 }
 
@@ -113,7 +110,6 @@ function draw() {
 
     // routine
     animationInProgress = logo.dividePolygon();
-    logo.determineFilledPolygonsSync();
     scale(scaleFactor)
     logo.draw(filledOnly = false);
 }
