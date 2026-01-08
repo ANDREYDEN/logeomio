@@ -9,12 +9,33 @@ class Logo {
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
         this.height = 2 * bounds.h;
-        this.polygons = [new Polygon([
+        this.polygonsToProcess = [new Polygon([
             new Vector(0, 0),
             new Vector(this.width, 0),
             new Vector(this.width, this.height),
             new Vector(0, this.height)
         ])];
+        /** @type {Polygon[]} */
+        this.resultingPolygons = []
+        this.filledPixels = []
+    }
+
+    determineFilledPixels({ pixelDistance = 1 } = {}) {
+        this.drawWord()
+
+        loadPixels();
+        console.log('Pixels loaded');
+        for (let y = 0; y < this.height; y += pixelDistance) {
+            for (let x = 0; x < this.width; x += pixelDistance) {
+                if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
+                    pixels[(x + y * width) * 4 + 1] === 0) {
+                    this.filledPixels.push({ x: x, y: y })
+                }
+            }
+        }
+
+        console.log('Determined filled pixels');
+        background(255)
     }
 
     /* (UNUSED)
@@ -43,48 +64,59 @@ class Logo {
                     return new Vector(0, random(this.height));
             }
             let a = pointOnRect(side1), b = pointOnRect(side2);
-            for (let polygon of this.polygons) {
+            for (let polygon of this.polygonsToProcess) {
                 let [intersections, intersectedEdges] = polygon.intersectByLine(a, b);
                 result = result.concat(polygon.split(intersections, intersectedEdges));
             }
-            this.polygons = result;
+            this.polygonsToProcess = result;
         }
     }
 
-    /* FUNCTION: initializes the polygons data structure by randomly dividing them in half
-     * ARGS: 
-     *      n: int - number of times to divide the polygons in half
-     */
-    dividePolygons(areaThreshold = MIN_AREA) {
-        // consider only the polygons with big area
-        let bigPolygons = this.polygons;
-        let resultingPolygons = [];
-        while (bigPolygons.length) {
-            let polygon = bigPolygons.pop();
-            let currentArea = polygon.area();
-
-            // pick 2 BIGGEST edges of the polygon
-            let top2Edges = [0, 1];
-            polygon.edges.forEach((edge, i) => {
-                if (i === 0) return
-                let newLength = Polygon.edgeLen(edge)
-                let top2Lengths = top2Edges.map(idx => Polygon.edgeLen(polygon.edges[idx]))
-                if (newLength > top2Lengths[0]) {
-                    top2Edges = [i, top2Edges[0]]
-                } else if (newLength > top2Lengths[1]) {
-                    top2Edges = [top2Edges[0], i]
-                }
-            })
-
-            // split the polygon in 2 smaller ones
-            let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
-            let subPolygons = polygon.split(intersections, top2Edges)
-
-            // continue dividing if the polygon is still big enough
-            let somePolygons = currentArea < areaThreshold ? resultingPolygons : bigPolygons
-            somePolygons.push(...subPolygons)
+    /* FUNCTION: initializes the polygons data structure by randomly dividing them in half */
+    dividePolygons() {
+        while (this.polygonsToProcess.length) {
+            this.dividePolygon()
         }
-        this.polygons = resultingPolygons;
+    }
+
+    dividePolygon(areaThreshold = MIN_AREA) {
+        if (this.polygonsToProcess.length === 0) return false;
+
+        const polygon = this.polygonsToProcess.pop()
+        let currentArea = polygon.area();
+
+        // pick 2 BIGGEST edges of the polygon
+        let top2Edges = [0, 1];
+        polygon.edges.forEach((edge, i) => {
+            if (i === 0) return
+            let newLength = Polygon.edgeLen(edge)
+            let top2Lengths = top2Edges.map(idx => Polygon.edgeLen(polygon.edges[idx]))
+            if (newLength > top2Lengths[0]) {
+                top2Edges = [i, top2Edges[0]]
+            } else if (newLength > top2Lengths[1]) {
+                top2Edges = [top2Edges[0], i]
+            }
+        })
+
+        // split the polygon in 2 smaller ones
+        let intersections = top2Edges.map(polygon.pickPoint.bind(polygon))
+        let subPolygons = polygon.split(intersections, top2Edges)
+
+        // continue dividing if the polygon is still big enough
+        for (const subPolygon of subPolygons) {
+            subPolygon.filled = this.isFilled(subPolygon);
+            if (currentArea < areaThreshold) {
+                this.resultingPolygons.push(subPolygon)
+            } else {
+                if (subPolygon.filled) {
+                    this.polygonsToProcess.push(subPolygon)
+                } else {
+                    this.resultingPolygons.push(subPolygon)
+                }
+            }
+        }
+
+        return true;
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
@@ -93,64 +125,30 @@ class Logo {
         text(this.word, this.width / 2, this.height / 2);
     }
 
-    /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end)*/
-    fillIn(afterFill, pixelDistance = 1) {
-        this.drawWord()
-
-        loadPixels();
-        console.log('Pixels loaded');
-        let filledPixels = []
-        for (let y = 0; y < this.height; y += pixelDistance) {
-            for (let x = 0; x < this.width; x += pixelDistance) {
-                if (pixels[(x + y * width) * 4] === LOGO_COLOR &&
-                    pixels[(x + y * width) * 4 + 1] === 0) {
-                    filledPixels.push({ x: x, y: y })
-                }
+    isFilled(polygon) {
+        for (const pixel of this.filledPixels) {
+            if (Polygon.contains(polygon, pixel)) {
+                return true;
             }
         }
-
-        console.log('Determined filled pixels');
-
-        // fill those polygons that contain word pixels
-        this.determineFilledPolygons({
-            polygons: this.polygons,
-            filledPixels: filledPixels,
-            afterFill: afterFill
-        })
-
-        background(255);
-    }
-
-    /* FUNCTION: computes the filled property for each polygon based on the filledPixels in a separate Worker 
-     * ARGS:
-     *      polygons: Array<Object> - array of polygons to process
-     *      filledPixels: Array<Object> - all the filled pixels in the image
-     *      afterFill: Function - executes after the computation is complete
-     */
-    determineFilledPolygons({ polygons, filledPixels, afterFill }) {
-        const fillingWorker = new Worker('js/fillPolygonsWorker.js')
-
-        fillingWorker.processData({
-            data: { polygons, filledPixels },
-            onComplete: data => {
-                data.polygons.forEach((polygon, i) => {
-                    polygons[i].filled = polygon.filled
-                })
-                afterFill()
-            }
-        })
+        return false;
     }
 
     /* FUNCTION: draws all polygons on a p5 canvas 
     *  ARGS:
     *       filledOnly: bool - draw only filled polygons
-    *
     */
     draw(filledOnly = false) {
-        this.polygons.forEach(polygon => {
+        for (const polygon of this.resultingPolygons) { 
             if (!filledOnly || polygon.filled) {
                 polygon.draw();
             }
-        })
+        }
+
+        for (const polygon of this.polygonsToProcess) { 
+            if (!filledOnly || polygon.filled) {
+                polygon.draw({ isProcessing: true });
+            }
+        }
     }
 }

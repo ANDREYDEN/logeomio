@@ -61,7 +61,7 @@ class Polygon {
      * ARGS: 
      *      a, b: Vectors - points that define a splitting line
      * RETURNS:
-     *      [[Vector, Vector], [int, int]] - points of intersection and the respetive edge numbers
+     *      [[p5.Vector, p5.Vector], [int, int]] - points of intersection and the respetive edge numbers
      */
     intersectByLine(a, b) {
         let intersections = []; // coordinates of intersections
@@ -89,7 +89,7 @@ class Polygon {
     */
     split(intersections, intersectedEdges) {
         // if there are no intersections, return the original polygon
-        if (intersections.length == 0) return this;
+        if (intersections.length == 0) return [this];
 
         let halfPolygon = (start, finish) => {
             let vertexes = [intersections[start]]; // add first intersection
@@ -126,7 +126,7 @@ class Polygon {
      * ARGS: 
      *      edgeNum: int - the number of the edge to pick the point on
      * RETURNS:
-     *      Vector:  the resulting point
+     *      p5.Vector:  the resulting point
      */
     pickPoint(edgeNum) {
         // print(this.edges, edgeNum);
@@ -142,8 +142,12 @@ class Polygon {
     }
 
     /* FUNCTION: draws a polygon (filled or unfilled depending on the filled property)*/
-    draw() {
-        fill(this.filled ? 0 : 255)
+    draw({ isProcessing = false } = {}) {
+        fill(
+            this.filled 
+            ? isProcessing ? 128 : 0 
+            : 255
+        )
         strokeWeight(0.05);
 
         beginShape()

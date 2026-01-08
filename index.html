@@ -23,19 +23,31 @@
         <main>
             <h1>Create you logo</h1>
             <br>
-            <form onsubmit="return onSubmit();">
+            <form onsubmit="return handleSubmit();">
                 <label for="word-input">Enter a word: </label><br>
-                <input type="text" id="word-input" name="logo" value="Hello"><br>
+                <input type="text" id="word-input" name="logo" value="Hello" onchange="(e) => validateWord(e.target.value)">
+                <br>
                 <p id="errorMessage"></p>
 
-                <input type="submit" id="submit" value="Create">
-                
+                <div class="settings">
+                    <label>
+                        <input id="animation-setting" type="checkbox" onclick="toggleAnimation()" />
+                        With animation
+                    </label>
+
+                    <label>
+                        <input id="stroke-setting" type="checkbox" onclick="toggleStroke()" />
+                        With stroke
+                    </label>
+                </div>
+
+                <button id="submit">Create</button>
             </form>
             <div id="sketch"></div>
             <div id="loading">
                 <p>Loading...</p>
             </div>
-            <input type="button" value="Save" onclick="saveCanvas('logo', 'png')">
+            <button onclick="saveCanvas('logo', 'png')">Save</button>
         </main>
         <footer>
             <p>Contribute <a href="https://github.com/ANDREYDEN/logeomio" target="_blank">here</a></p>
