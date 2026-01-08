@@ -4,8 +4,16 @@ let scaleFactor = 1;
 const settings = {
     animationEnabled: false,
     strokeEnabled: false,
+    randomColorsEnabled: false,
 };
 let animationInProgress = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+    const textInput = document.getElementById("word-input");
+    textInput.addEventListener("input", (e) => {
+        validateWord(e.target.value);
+    });
+})
 
 /**
  * Enables/disables submit button based on entered word.
@@ -20,10 +28,10 @@ function validateWord(word) {
 
     const isValid = MIN_TEXT_LENGTH <= word.length && word.length <= MAX_TEXT_LENGTH
     if (!isValid) {
-        errorMessage.innerHTML = `The name should be from ${MIN_TEXT_LENGTH} to ${MAX_TEXT_LENGTH} characters long`
+        errorMessage.innerHTML = `The input should be from ${MIN_TEXT_LENGTH} to ${MAX_TEXT_LENGTH} characters long`
         submitButton.setAttribute('disabled', 'true')
     } else {
-        submitButton.setAttribute('disabled', 'false')
+        submitButton.removeAttribute('disabled')
     }
 }
 
@@ -34,6 +42,10 @@ function toggleAnimation() {
 
 function toggleStroke() {
     settings.strokeEnabled = !settings.strokeEnabled;
+}
+
+function toggleRandomColors() {
+    settings.randomColorsEnabled = !settings.randomColorsEnabled;
 }
 
 function toggleLoadingScreen() {

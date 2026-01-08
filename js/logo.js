@@ -4,11 +4,13 @@ class Logo {
      * ARGS: 
      *      word: string - a word to be displayed
      */
-    constructor(word) {
+    constructor(word, { fillColor } = {}) {
         this.word = word;
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
         this.height = 2 * bounds.h;
+        this.fillColor = 
+
         this.polygonsToProcess = [new Polygon([
             new Vector(0, 0),
             new Vector(this.width, 0),
