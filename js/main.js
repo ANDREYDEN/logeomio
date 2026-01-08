@@ -62,7 +62,7 @@ function toggleLoadingScreen() {
 //************************ P5 *************************/
 
 function displayLogo(word) {
-    logo = new Logo(word);
+    logo = new Logo(word, { withRandomColors: settings.randomColorsEnabled });
     logo.determineFilledPixels();
 
     if (settings.strokeEnabled) {
