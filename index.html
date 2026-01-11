@@ -26,14 +26,22 @@
             <h1>Create you logo</h1>
             <br>
             <form onsubmit="return handleSubmit();">
-                <div class="content-entry">
-                    <label for="word-input">Enter a word: 
-                        <input type="text" id="word-input" name="logo" value="Hello">
+                <radio-group>
+                    <label>
+                        <input type="radio" name="input-type" value="word" checked onclick="changeInputType('text')" />
+                        Word
                     </label>
 
-                    <p>or</p>
+                    <label>
+                        <input type="radio" name="input-type" value="image" onclick="changeInputType('image')" />
+                        Image
+                    </label>
+                </radio-group>
 
-                    <input type="file" name="image" id="image-picker" />
+                <div class="content-entry">
+                    <input type="text" id="word-input" name="logo" value="Hello">
+
+                    <input type="file" name="image" id="image-picker" class="hidden" />
                 </div>
                 <p id="errorMessage"></p>
 

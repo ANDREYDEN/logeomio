@@ -34,12 +34,12 @@ main {
     margin: auto;
 }
 
+.hidden {
+    display: none;
+}
+
 .content-entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
+    margin: 16px 0;
 }
 
 .actions {

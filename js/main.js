@@ -1,17 +1,37 @@
 /** @type {Logo | undefined} */
 let logo;
 let scaleFactor = 1;
+/** @type {'text' | 'image'} */
+let inputType = 'text';
 const settings = {
     animationEnabled: false,
     strokeEnabled: false,
     randomColorsEnabled: false,
 };
 let animationInProgress = false;
+/** @type {p5.Image} */
+let uploadedImage;
+
+/** @type {HTMLInputElement | undefined} */
+let textInput;
+/** @type {HTMLInputElement | undefined} */
+let imagePickerInput;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const textInput = document.getElementById("word-input");
+    textInput = document.getElementById("word-input");
     textInput.addEventListener("input", (e) => {
         validateWord(e.target.value);
+    });
+
+    imagePickerInput = document.getElementById("image-picker");
+    imagePickerInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        
+        uploadedImage = loadImage(url, (img) => image(img, 0, 0))
+        console.log({ uploadedImage });
     });
 })
 
@@ -46,6 +66,21 @@ function toggleStroke() {
 
 function toggleRandomColors() {
     settings.randomColorsEnabled = !settings.randomColorsEnabled;
+}
+
+/**
+ * @param {'text' | 'image' } type 
+ */
+function changeInputType(type) {
+    inputType = type;
+
+    if (inputType === 'text') {
+        textInput.classList.remove('hidden')
+        imagePickerInput.classList.add('hidden')
+    } else {
+        textInput.classList.add('hidden')
+        imagePickerInput.classList.remove('hidden')
+    }
 }
 
 function toggleLoadingScreen() {

@@ -42,6 +42,11 @@ input[type="file"] {
     border-radius: 4px;
 }
 
+radio-group {
+    display: flex;
+    flex-direction: column;
+}
+
 fieldset {
     padding: 16px;
     display: flex;
@@ -76,4 +81,10 @@ button:hover {
 button:focus {
     background-color: rgb(182, 182, 182);
     color: black;
+}
+
+button:disabled {
+    background-color: gray;
+    border-color: gray;
+    cursor: auto;
 }
