@@ -1,0 +1,79 @@
+label {
+    font-size: 1.25em;
+}
+
+label:has(input[type="text"]) {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    border-radius: 4px;
+    padding: 0.25em;
+}
+
+input[type="text"] {
+    height: 25px;
+    width: 50%;
+    font-size: 1.25em;
+    outline: none;
+    border: 1px solid black;
+}
+
+input[type="button"], input[type="submit"] {
+    background-color: black;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    font-size: 1.25em;
+    outline: none;
+    width: 100px;
+}
+
+input[type="button"]:disabled, input[type="submit"]:disabled {
+    background-color: gray;
+    cursor: auto;
+}
+
+input[type="file"] {
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+fieldset {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 4px;
+    border: 1px solid black;
+}
+
+legend {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+button {
+    background-color: black;
+    outline: none;
+    border: 2px solid black;
+    border-radius: 4px;
+    color: white;
+    padding: 8px;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: white;
+    color: black;
+}
+
+button:focus {
+    background-color: rgb(182, 182, 182);
+    color: black;
+}
