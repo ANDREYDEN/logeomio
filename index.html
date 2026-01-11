@@ -6,6 +6,8 @@
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/form.css">
+
         <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js'></script>
         <script src='js/consts.js'></script>
         <script src='js/extend.js'></script>
@@ -24,12 +26,28 @@
             <h1>Create you logo</h1>
             <br>
             <form onsubmit="return handleSubmit();">
-                <label for="word-input">Enter a word: </label><br>
-                <input type="text" id="word-input" name="logo" value="Hello">
-                <br>
+                <radio-group>
+                    <label>
+                        <input type="radio" name="input-type" value="word" checked onclick="changeInputType('text')" />
+                        Word
+                    </label>
+
+                    <label>
+                        <input type="radio" name="input-type" value="image" onclick="changeInputType('image')" />
+                        Image
+                    </label>
+                </radio-group>
+
+                <div class="content-entry">
+                    <input type="text" id="word-input" name="logo" value="Hello">
+
+                    <input type="file" name="image" id="image-picker" class="hidden" />
+                </div>
                 <p id="errorMessage"></p>
 
-                <div class="settings">
+                <fieldset class="settings">
+                    <legend>Settings</legend>
+
                     <label>
                         <input id="animation-setting" type="checkbox" onclick="toggleAnimation()" />
                         With animation
@@ -44,15 +62,18 @@
                         <input id="random-colors-setting" type="checkbox" onclick="toggleRandomColors()" />
                         With random colors
                     </label>
-                </div>
+                </fieldset>
 
-                <button id="submit">Create</button>
+                <div class="actions">
+                    <button id="submit">Create</button>
+
+                    <button onclick="saveCanvas('logo', 'png')">Save</button>
+                </div>
             </form>
             <div id="sketch"></div>
             <div id="loading">
                 <p>Loading...</p>
             </div>
-            <button onclick="saveCanvas('logo', 'png')">Save</button>
         </main>
         <footer>
             <p>Contribute <a href="https://github.com/ANDREYDEN/logeomio" target="_blank">here</a></p>
