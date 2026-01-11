@@ -16,8 +16,11 @@ let uploadedImage;
 let textInput;
 /** @type {HTMLInputElement | undefined} */
 let imagePickerInput;
+/** @type {HTMLButtonElement | undefined} */
+let submitButton;
 
 document.addEventListener("DOMContentLoaded", () => {
+    submitButton = document.getElementById("submit")
     textInput = document.getElementById("word-input");
     textInput.addEventListener("input", (e) => {
         validateWord(e.target.value);
@@ -29,9 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!file) return;
 
         const url = URL.createObjectURL(file);
-        
-        uploadedImage = loadImage(url, (img) => image(img, 0, 0))
-        console.log({ uploadedImage });
+        loadImage(url, (img) => {
+            uploadedImage = img;
+            submitButton.removeAttribute('disabled');
+        });
     });
 })
 
@@ -43,8 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function validateWord(word) {
     let errorMessage = document.getElementById("errorMessage")
     errorMessage.innerHTML = "";
-
-    const submitButton = document.getElementById("submit")
 
     const isValid = MIN_TEXT_LENGTH <= word.length && word.length <= MAX_TEXT_LENGTH
     if (!isValid) {
@@ -77,7 +79,11 @@ function changeInputType(type) {
     if (inputType === 'text') {
         textInput.classList.remove('hidden')
         imagePickerInput.classList.add('hidden')
-    } else {
+        validateWord(textInput.value)
+    } else if (inputType === 'image') {
+        if (!uploadedImage) {
+            submitButton.setAttribute('disabled', 'true')
+        }
         textInput.classList.add('hidden')
         imagePickerInput.classList.remove('hidden')
     }
@@ -97,8 +103,13 @@ function toggleLoadingScreen() {
 //************************ P5 *************************/
 
 function displayLogo(word) {
-    logo = new Logo(word, { withRandomColors: settings.randomColorsEnabled });
-    logo.determineFilledPixels();
+    logo = new Logo();
+
+    if (inputType === 'text') {
+        logo.initializeFromWord(word, { withRandomColors: settings.randomColorsEnabled });
+    } else if (inputType === 'image' && uploadedImage) {
+        logo.initializeFromImage(uploadedImage);
+    }
 
     if (settings.strokeEnabled) {
         strokeWeight(0.2);

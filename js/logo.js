@@ -1,11 +1,15 @@
 class Logo {
     /**
      * FUNCTION: constructs a Logo object
-     * ARGS: 
-     *      word: string - a word to be displayed
      */
-    constructor(word, { withRandomColors = false } = {}) {
-        this.word = word;
+    constructor() {
+        /** @type {Polygon[]} */
+        this.resultingPolygons = []
+        this.filledPixels = []
+    }
+
+    /** @param {string} word */
+    initializeFromWord(word, { withRandomColors = false } = {}) {
         let bounds = FONT.textBounds(word, 0, 0, TEXT_SIZE);
         this.width = bounds.w + 2 * PADDING;
         this.height = 2 * bounds.h;
@@ -17,14 +21,18 @@ class Logo {
             new Vector(this.width, this.height),
             new Vector(0, this.height)
         ])];
-        /** @type {Polygon[]} */
-        this.resultingPolygons = []
-        this.filledPixels = []
+
+        this.#determineFilledPixels(word)
     }
 
-    determineFilledPixels({ pixelDistance = 1 } = {}) {
+    /** @param {p5.Image} img */
+    initializeFromImage(img) {
+
+    }
+
+    #determineFilledPixels(word, { pixelDistance = 1 } = {}) {
         const wordColor = 145
-        this.drawWord(wordColor)
+        this.#drawWord(word, wordColor)
 
         loadPixels();
         console.log('Pixels loaded');
@@ -37,14 +45,14 @@ class Logo {
             }
         }
 
-        console.log('Determined filled pixels');
+        console.log(`Determined filled pixels ${this.filledPixels.length}`);
         background(255)
     }
 
     /* FUNCTION: fills the polygons according to the word (refreshes the canvas at the end) */
-    drawWord(wordColor) {
+    #drawWord(word, wordColor) {
         fill(wordColor, 0, 0);
-        text(this.word, this.width / 2, this.height / 2);
+        text(word, this.width / 2, this.height / 2);
     }
 
     /* (UNUSED)
