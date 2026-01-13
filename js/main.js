@@ -107,6 +107,9 @@ function displayLogo(word) {
 
     if (inputType === 'text') {
         logo.initializeFromWord(word, { withRandomColors: settings.randomColorsEnabled });
+
+        // scaleFactor = width / logo.width;
+        // resizeCanvas(width, int(scaleFactor * logo.height), false);
     } else if (inputType === 'image' && uploadedImage) {
         logo.initializeFromImage(uploadedImage);
     }
@@ -125,8 +128,6 @@ function displayLogo(word) {
 
     toggleLoadingScreen()
 
-    scaleFactor = width / logo.width;
-    resizeCanvas(width, int(scaleFactor * logo.height), false);
 
     // routine
     logo.dividePolygons()
@@ -134,7 +135,7 @@ function displayLogo(word) {
 
     toggleLoadingScreen()
     scale(scaleFactor)
-    logo.draw(filledOnly = false)
+    logo.draw()
     console.log('Finished filling');
 }
 
@@ -169,5 +170,5 @@ function draw() {
     // routine
     animationInProgress = logo.dividePolygon();
     scale(scaleFactor)
-    logo.draw(filledOnly = false);
+    logo.draw();
 }
