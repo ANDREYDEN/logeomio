@@ -9,7 +9,9 @@ class Polygon {
         for (let i = 0; i < n; i++) {
             this.edges.push([vertexes[i], vertexes[(i + 1) % n]]);
         }
-        this.filled = false;
+        this.uniform = false;
+        /** @type {p5.Color} */
+        this.color = color(128);
     }
 
     /* FUNCTION: finds segment-line intersection
@@ -55,6 +57,21 @@ class Polygon {
     */
     perimeter() {
         return this.edges.reduce((sum, edge) => sum + edge[0].dist(edge[1]), 0)
+    }
+
+    /** 
+     * Returns the bounding rectangle of the polygon.
+     * @returns {{bottom: number, left: number, top: number, right: number}}
+     */
+    boundingRect() {
+        let xs = this.edges.map(edge => [edge[0].x, edge[1].x]).flat();
+        let ys = this.edges.map(edge => [edge[0].y, edge[1].y]).flat();
+        return {
+            bottom: Math.max(...ys),
+            left: Math.min(...xs),
+            top: Math.min(...ys),
+            right: Math.max(...xs),
+        }
     }
 
     /* FUNCTION: finds the points of intersection if any by a given line
@@ -103,16 +120,14 @@ class Polygon {
         return [new Polygon(halfPolygon(0, 1)), new Polygon(halfPolygon(1, 0))]
     }
 
-    /* FUNCTION: checks if a given polygon contains a given point
-     * ARGS: 
-     *      point: Vector - a point to be checked
-     * RETURNS:
-     *      bool: true if point is inside the polygon,
-     *            false otherwise
+    /**
+     * Checks if the polygon contains a given point
+     * @param {{ x: number, y: number}} point 
+     * @returns {boolean}
      */
-    static contains(polygon, point) {
+    contains(point) {
         let cnt = 0;
-        polygon.edges.forEach(edge => {
+        this.edges.forEach(edge => {
             let [a, b] = edge
             if (a.y == b.y) return;
             let x = (point.y - a.y) / (b.y - a.y) * (b.x - a.x) + a.x;
@@ -141,13 +156,12 @@ class Polygon {
         return new Vector(x, y);
     }
 
-    /* FUNCTION: draws a polygon (filled or unfilled depending on the filled property)*/
-    draw({ isProcessing = false, filledColor = 0, unfilledColor = 255 } = {}) {
-        fill(
-            this.filled 
-            ? isProcessing ? 128 : filledColor 
-            : unfilledColor
-        )
+    /**
+     * Draws a polygon using polygon's color or a given `color`.
+     * @param {p5.Color | undefined} color 
+     */
+    draw(color) {
+        fill((color ?? this.color ?? 128));
         strokeWeight(0.05);
 
         beginShape()
@@ -157,5 +171,12 @@ class Polygon {
             vertex(b.x, b.y)
         })
         endShape(CLOSE);
+    }
+
+    hasColorHigherThan(threshold) {
+        if (this.color === undefined) return false;
+        return red(this.color) > threshold ||
+               green(this.color) > threshold ||
+               blue(this.color) > threshold;
     }
 }

@@ -1,17 +1,41 @@
 /** @type {Logo | undefined} */
 let logo;
 let scaleFactor = 1;
+/** @type {'text' | 'image'} */
+let inputType = 'text';
 const settings = {
     animationEnabled: false,
     strokeEnabled: false,
     randomColorsEnabled: false,
 };
 let animationInProgress = false;
+/** @type {p5.Image} */
+let uploadedImage;
+
+/** @type {HTMLInputElement | undefined} */
+let textInput;
+/** @type {HTMLInputElement | undefined} */
+let imagePickerInput;
+/** @type {HTMLButtonElement | undefined} */
+let submitButton;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const textInput = document.getElementById("word-input");
+    submitButton = document.getElementById("submit")
+    textInput = document.getElementById("word-input");
     textInput.addEventListener("input", (e) => {
         validateWord(e.target.value);
+    });
+
+    imagePickerInput = document.getElementById("image-picker");
+    imagePickerInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        loadImage(url, (img) => {
+            uploadedImage = img;
+            submitButton.removeAttribute('disabled');
+        });
     });
 })
 
@@ -23,8 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function validateWord(word) {
     let errorMessage = document.getElementById("errorMessage")
     errorMessage.innerHTML = "";
-
-    const submitButton = document.getElementById("submit")
 
     const isValid = MIN_TEXT_LENGTH <= word.length && word.length <= MAX_TEXT_LENGTH
     if (!isValid) {
@@ -48,6 +70,25 @@ function toggleRandomColors() {
     settings.randomColorsEnabled = !settings.randomColorsEnabled;
 }
 
+/**
+ * @param {'text' | 'image' } type 
+ */
+function changeInputType(type) {
+    inputType = type;
+
+    if (inputType === 'text') {
+        textInput.classList.remove('hidden')
+        imagePickerInput.classList.add('hidden')
+        validateWord(textInput.value)
+    } else if (inputType === 'image') {
+        if (!uploadedImage) {
+            submitButton.setAttribute('disabled', 'true')
+        }
+        textInput.classList.add('hidden')
+        imagePickerInput.classList.remove('hidden')
+    }
+}
+
 function toggleLoadingScreen() {
     const canv = document.getElementById('sketch')
     const loading = document.getElementById('loading')
@@ -62,8 +103,16 @@ function toggleLoadingScreen() {
 //************************ P5 *************************/
 
 function displayLogo(word) {
-    logo = new Logo(word, { withRandomColors: settings.randomColorsEnabled });
-    logo.determineFilledPixels();
+    logo = new Logo();
+
+    if (inputType === 'text') {
+        logo.initializeFromWord(word, { withRandomColors: settings.randomColorsEnabled });
+
+        // scaleFactor = width / logo.width;
+        // resizeCanvas(width, int(scaleFactor * logo.height), false);
+    } else if (inputType === 'image' && uploadedImage) {
+        logo.initializeFromImage(uploadedImage);
+    }
 
     if (settings.strokeEnabled) {
         strokeWeight(0.2);
@@ -79,8 +128,6 @@ function displayLogo(word) {
 
     toggleLoadingScreen()
 
-    scaleFactor = width / logo.width;
-    resizeCanvas(width, int(scaleFactor * logo.height), false);
 
     // routine
     logo.dividePolygons()
@@ -88,7 +135,7 @@ function displayLogo(word) {
 
     toggleLoadingScreen()
     scale(scaleFactor)
-    logo.draw(filledOnly = false)
+    logo.draw()
     console.log('Finished filling');
 }
 
@@ -123,5 +170,5 @@ function draw() {
     // routine
     animationInProgress = logo.dividePolygon();
     scale(scaleFactor)
-    logo.draw(filledOnly = false);
+    logo.draw();
 }

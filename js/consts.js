@@ -1,9 +1,10 @@
 const EPS = 1e-06
 const PADDING = 15
 const TEXT_SIZE = 100
-const MIN_AREA = 10
-const LOGO_COLOR = 0
+// const MIN_AREA = 10
+const MIN_AREA = 100
 const WINDOW_CANVAS_RATIO = 0.85
+const MAX_UNIFORMITY_DISTANCE = 100
 
 const MIN_TEXT_LENGTH = 3
 const MAX_TEXT_LENGTH = 15
